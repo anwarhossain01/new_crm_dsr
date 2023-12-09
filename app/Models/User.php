@@ -11,8 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
-    protected $table = 'anagrafiche';
+    protected $table = 'utenze';
     // change primary key
     protected $primaryKey = 'ID';
     // no timestamps
@@ -20,4 +19,16 @@ class User extends Authenticatable
 
     // ...
 
+    // add fillable Nome
+    protected $fillable = [
+        'Nome',
+        'Password',
+        'Gruppo',
+        'mail', 'active'
+    ];
+
+
+    public function Information(){
+        return $this->hasMany(Information::class, 'Agente_ID', 'ID');
+    }
 }
