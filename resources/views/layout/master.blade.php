@@ -20,7 +20,7 @@
 
 
             <nav
-                class="flex-no-wrap relative flex w-full items-center justify-between bg-[#FBFBFB] py-2 shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 lg:flex-wrap lg:justify-start lg:py-4">
+                class="flex-no-wrap relative flex w-full items-center justify-between bg-[#FBFBFB] py-2 shadow-md shadow-black/5 dark:bg-neutral-600 dark:shadow-black/10 print:hidden lg:flex-wrap lg:justify-start lg:py-4">
                 <div class="flex w-full flex-wrap items-center justify-between px-3">
                     <!-- Hamburger button for mobile view -->
                     <button
@@ -52,40 +52,50 @@
                             <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                                 <!-- Dashboard link -->
                                 <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-zinc-400"
-                                    href="{{route('index')}}" data-te-nav-link-ref>Dashboard</a>
-                            </li>
-                       
-                            <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-                                <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                                    href="#" data-te-nav-link-ref>Stampa questa pagina</a>
-                            </li>
-                         
-                            <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-                                <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                                    href="#" data-te-nav-link-ref>Stampa tutto</a>
+                                    href="{{ route('index') }}" data-te-nav-link-ref>Dashboard</a>
                             </li>
 
                             <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                                 <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                                    href="#" data-te-nav-link-ref>Ricerca avanzata</a>
+                                    onclick="printSelectionsForPage()" href="#" data-te-nav-link-ref>Stampa questa
+                                    pagina</a>
                             </li>
 
                             <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                                 <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                                    href="#" data-te-nav-link-ref>Importa</a>
+                                    href="{{ Auth::user()->Gruppo == 'Admin' ? route('print.all') : route('print.user.all') }}" data-te-nav-link-ref>Stampa tutto</a>
                             </li>
 
                             <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                                 <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                                    href="#" data-te-nav-link-ref>Esporta i risultati</a>
+                                    href="{{ route('search.advance') }}" data-te-nav-link-ref>Ricerca avanzata</a>
                             </li>
+
+                            @if (Auth::user()->Gruppo == 'Admin')
+                                <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                                    <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
+                                        href="#" data-te-nav-link-ref>Importa</a>
+                                </li>
+
+                                <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                                    <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
+                                        href="#" data-te-nav-link-ref>Esporta i risultati</a>
+                                </li>
+                            @endif
+
                         </ul>
                     </div>
 
                     <!-- Right elements -->
                     <div class="relative flex items-center">
 
-                        @include('layout.templates.new_user')
+                        @php
+                            $user = Auth::user();
+                        @endphp
+                        @if ($user->Gruppo == 'Admin')
+                            @include('layout.templates.new_user')
+                        @endif
+
 
                         <!-- Second dropdown container -->
                         <div class="relative" data-te-dropdown-ref data-te-dropdown-alignment="end">
@@ -106,8 +116,8 @@
                                 <!-- Second dropdown menu items -->
                                 <li>
                                     <a class="flex w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
-                                        href="#" data-te-dropdown-item-ref>
-                                        <svg class="h-4 w-4 mr-2 text-gray-800 dark:text-white" aria-hidden="true"
+                                        href="{{ route('password.change') }}" data-te-dropdown-item-ref>
+                                        <svg class="mr-2 h-4 w-4 text-gray-800 dark:text-white" aria-hidden="true"
                                             viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path
                                                 d="M6.5 8C5.80777 8 5.13108 7.79473 4.55551 7.41015C3.97993 7.02556 3.53133 6.47893 3.26642 5.83939C3.00152 5.19985 2.9322 4.49612 3.06725 3.81719C3.2023 3.13825 3.53564 2.51461 4.02513 2.02513C4.51461 1.53564 5.13825 1.2023 5.81719 1.06725C6.49612 0.932205 7.19985 1.00152 7.83939 1.26642C8.47893 1.53133 9.02556 1.97993 9.41015 2.55551C9.79473 3.13108 10 3.80777 10 4.5"
@@ -127,12 +137,12 @@
                                 <li>
                                     <a class="flex w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
                                         href="{{ route('logout') }}" data-te-dropdown-item-ref>
-                                        <svg class="h-4 w-4 mr-2 text-gray-800 dark:text-white" aria-hidden="true"
+                                        <svg class="mr-2 h-4 w-4 text-gray-800 dark:text-white" aria-hidden="true"
                                             xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                             <path
                                                 d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
                                         </svg>
-                                        
+
                                         Logout</a>
                                 </li>
 
@@ -166,8 +176,57 @@
             };
         </script>
 
-        @push('js')
-        @endpush
+        <script>
+            let checkInputsAll = [];
+
+            function addAllCheckboxForPage() {
+
+                checkInputsAll = [];
+
+                let checkboxes = document.querySelectorAll('.info-checks');
+
+                checkboxes.forEach(element => {
+                    checkInputsAll.push(element.value);
+                });
+
+            }
+
+            function printSelectionsForPage() {
+                addAllCheckboxForPage();
+                // if checkInputs empty
+                if (checkInputsAll.length == 0) {
+                    return;
+                }
+
+                // Create a form element
+                var form = document.createElement('form');
+                form.method = 'POST'; // Use POST method
+                form.action = '{{ route('print.page') }}';
+
+                // Create an input for CSRF token
+                var csrfTokenInput = document.createElement('input');
+                csrfTokenInput.type = 'hidden';
+                csrfTokenInput.name = '_token';
+                csrfTokenInput.value = '{{ csrf_token() }}';
+                form.appendChild(csrfTokenInput);
+
+                // Create an input element for each ID
+                checkInputsAll.forEach(function(id) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden'; // Hidden input
+                    input.name = 'ids[]'; // Use an array for multiple values
+                    input.value = id;
+                    form.appendChild(input);
+                });
+
+                // Append the form to the body
+                document.body.appendChild(form);
+
+                // Submit the form
+                form.submit();
+
+            }
+        </script>
     </body>
 
 </html>

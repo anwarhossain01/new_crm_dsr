@@ -48,9 +48,9 @@ class AuthController extends Controller
             $information = Information::paginate(10);
             return view('admin.dashboard', compact('user', 'information'));
         } elseif ($user->Gruppo == 'User') {
-            return view('agent.dashboard');
+            $information = Information::where('Agente_ID', $user->ID)->paginate(10);
+            return view('agent.dashboard', compact('user', 'information'));
         }
-
 
     }
     //
@@ -109,6 +109,28 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('login');
+    }
+
+    public function Usercreate(){
+        return view('admin.UserCreate');
+    }
+
+    public function UserCreateSubmit(Request $request){
+        if ($request->password != $request->password_confirmation) {
+            return redirect()->back()->with('error', 'Le passwords non corrispondono.');
+        }
+
+        $user = new User();
+        $user -> Nome = $request -> username;
+        $user -> Password = Hash::make($request -> password);
+        $user -> Gruppo = 'User';
+        $user -> mail = $request -> email;
+        $user->Gruppo = $request->Gruppo;
+        $user -> active = true;
+
+        $user->save();
+
+        return redirect()->route('index')->with('success', 'Utente creato con successo!');
     }
 
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\AuthController;
+use App\Http\Controllers\admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,6 +28,16 @@ Route::post('/register/submit', [AuthController::class, 'registerSubmit'])->name
 
 Route::get('/', [AuthController::class, 'index'])->name('index')->middleware('auth');
 
+// new user form
+Route::get('/new', [AuthController::class, 'Usercreate'])->name('user.new')->middleware('auth');
+Route::post('/new', [AuthController::class, 'UserCreateSubmit'])->name('user.new.submit')->middleware('auth');
+
+// new Information record
+Route::post('/new/info', [AdminController::class, 'NewInfo'])->name('new.info')->middleware('auth');
+Route::get('/info/edit/{id}', [AdminController::class, 'InfoEdit'])->name('info.edit')->middleware('auth');
+Route::post('/info/edit/submit', [AdminController::class, 'InfoEditSubmit'])->name('info.edit.submit')->middleware('auth');
+Route::post('/info/delete', [AdminController::class, 'deleteItems'])->name('info.delete')->middleware('auth');
+
 // collab routes
 Route::get('/collab', [AdminController::class, 'collab'])->name('collab')->middleware('auth');
 Route::post('/collab/msg', [AdminController::class, 'CollabMsg'])->name('collab.msg')->middleware('auth');
@@ -35,6 +46,20 @@ Route::post('/collab/msg', [AdminController::class, 'CollabMsg'])->name('collab.
 Route::get('/{pg}', [AdminController::class, 'IndexPagination'])->name('index.pg')->middleware('auth');
 Route::get('/collab/{pg}', [AdminController::class, 'CollabPagination'])->name('collab.pg')->middleware('auth');
 
+// print page
+Route::post('/print', [AdminController::class, 'PrintPage'])->name('print')->middleware('auth');
+Route::get('/print/all', [AdminController::class, 'PrintPageAll'])->name('print.all')->middleware('auth');
+Route::post('/print/page', [AdminController::class, 'PrintThisPage'])->name('print.page')->middleware('auth');
+Route::get('/print/user/all', [UserController::class, 'PrintUserAll'])->name('print.user.all')->middleware('auth');
+
 // search function
 Route::get('/search/index', [AdminController::class, 'IndexSearch'])->name('index.search')->middleware('auth');
-// Route::post('/search/collab', [AdminController::class, 'CollabSearch'])->name('collab.search')->middleware('auth');
+Route::get('/search/collab', [UserController::class, 'CollabSearch'])->name('collab.search')->middleware('auth');
+Route::get('/search/advance', [AdminController::class, 'AdvanceSearch'])->name('search.advance')->middleware('auth');
+
+//password
+Route::get('/password/change', [AdminController::class, 'PasswordChange'])->name('password.change')->middleware('auth');
+Route::post('/password/change/submit', [AdminController::class, 'PasswordChangeSubmit'])->name('password.change.submit')->middleware('auth');
+
+// export paths
+Route::get('export/xl', [AdminController::class, 'exportXl'])->name('export.xl')->middleware('auth');
