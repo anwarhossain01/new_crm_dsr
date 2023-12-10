@@ -222,4 +222,18 @@ class AdminController extends Controller
     {
         return view('searchAdvance');
     }
+
+    public function PrintCollab(Request $request){
+        $ids = $request->input('ids');
+
+        $users = User::whereIn('ID', $ids)->get();
+
+        return view('admin.printCollab', compact('users'));
+    }
+
+    public function PrintCollabAll(){
+        $users = User::get();
+        return view('admin.printCollab', compact('users'));
+
+    }
 }

@@ -63,7 +63,9 @@
 
                             <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                                 <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                                    href="{{ Auth::user()->Gruppo == 'Admin' ? route('print.all') : route('print.user.all') }}" data-te-nav-link-ref>Stampa tutto</a>
+                                href="{{ Auth::user()->Gruppo == 'Admin' ? (Route::currentRouteName() == 'collab' ? route('print.collab.all') : route('print.all')) : route('print.user.all') }}"
+
+                                    data-te-nav-link-ref>Stampa tutto</a>
                             </li>
 
                             <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
@@ -182,8 +184,16 @@
             function addAllCheckboxForPage() {
 
                 checkInputsAll = [];
+                // Check the current route name
+                let currentRoute = "{{ Route::currentRouteName() }}";
 
-                let checkboxes = document.querySelectorAll('.info-checks');
+                // Set checkboxes based on the route name
+                if (currentRoute === "collab") {
+                    checkboxes = document.querySelectorAll('.info-checks-collab');
+                } else {
+                    checkboxes = document.querySelectorAll('.info-checks');
+                }
+
 
                 checkboxes.forEach(element => {
                     checkInputsAll.push(element.value);
@@ -201,7 +211,15 @@
                 // Create a form element
                 var form = document.createElement('form');
                 form.method = 'POST'; // Use POST method
-                form.action = '{{ route('print.page') }}';
+                let currentRoute = "{{ Route::currentRouteName() }}";
+
+                // Set form action based on the route name
+                if (currentRoute === "collab") {
+                    form.action = '{{ route('print.collab') }}';
+                } else {
+                    form.action = '{{ route('print.page') }}';
+                }
+
 
                 // Create an input for CSRF token
                 var csrfTokenInput = document.createElement('input');

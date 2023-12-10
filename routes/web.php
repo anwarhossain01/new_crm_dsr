@@ -51,6 +51,10 @@ Route::post('/print', [AdminController::class, 'PrintPage'])->name('print')->mid
 Route::get('/print/all', [AdminController::class, 'PrintPageAll'])->name('print.all')->middleware('auth');
 Route::post('/print/page', [AdminController::class, 'PrintThisPage'])->name('print.page')->middleware('auth');
 Route::get('/print/user/all', [UserController::class, 'PrintUserAll'])->name('print.user.all')->middleware('auth');
+Route::post('print/collab', [AdminController::class, 'PrintCollab'])->name('print.collab')->middleware('auth');
+Route::get('print/collab/all', [AdminController::class, 'PrintCollabAll'])->name('print.collab.all')->middleware('auth');
+
+
 
 // search function
 Route::get('/search/index', [AdminController::class, 'IndexSearch'])->name('index.search')->middleware('auth');
