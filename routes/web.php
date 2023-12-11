@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\AuthController;
+use App\Http\Controllers\admin\ExportController;
 use App\Http\Controllers\admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -54,16 +55,27 @@ Route::get('/print/user/all', [UserController::class, 'PrintUserAll'])->name('pr
 Route::post('print/collab', [AdminController::class, 'PrintCollab'])->name('print.collab')->middleware('auth');
 Route::get('print/collab/all', [AdminController::class, 'PrintCollabAll'])->name('print.collab.all')->middleware('auth');
 
-
+// sorting routes
+Route::get('/dateModification/{sort}', [AdminController::class, 'SortDateModification'])->name('dateModification')->middleware('auth');
+Route::get('/stato/{sort}', [AdminController::class, 'SortStato'])->name('stato')->middleware('auth');
+Route::get('/Richiedente/{sort}', [AdminController::class, 'SortRichiedente'])->name('richiedente')->middleware('auth');
 
 // search function
 Route::get('/search/index', [AdminController::class, 'IndexSearch'])->name('index.search')->middleware('auth');
 Route::get('/search/collab', [UserController::class, 'CollabSearch'])->name('collab.search')->middleware('auth');
+Route::get('search/collab/admin', [AdminController::class, 'collabSearchAdmin'])->name('collab.search.admin')->middleware('auth');
 Route::get('/search/advance', [AdminController::class, 'AdvanceSearch'])->name('search.advance')->middleware('auth');
 
 //password
 Route::get('/password/change', [AdminController::class, 'PasswordChange'])->name('password.change')->middleware('auth');
 Route::post('/password/change/submit', [AdminController::class, 'PasswordChangeSubmit'])->name('password.change.submit')->middleware('auth');
 
+// import routes
+Route::get('/import/document', [ExportController::class, 'ImportDocument'])->name('import.document')->middleware('auth');
+Route::post('/import/submit' , [ExportController::class, 'ImportDocumentSubmit'])->name('import.submit')->middleware('auth');
+
 // export paths
-Route::get('export/xl', [AdminController::class, 'exportXl'])->name('export.xl')->middleware('auth');
+Route::post('export/select', [ExportController::class, 'ChooseExport'])->name('export.choose')->middleware('auth');
+Route::post('export/select/submit', [ExportController::class, 'ChooseExportSubmit'])->name('export.choose.submit')->middleware('auth');
+
+

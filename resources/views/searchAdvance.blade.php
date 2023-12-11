@@ -517,16 +517,12 @@
             <td class="runner-cc alt"><span id="edit1_Compleanno_0" class="runner-nowrap""><input
                         id="value_Compleanno_1" type="Text" name="value_Compleanno_1" size="20"
                         value=""><input id="tsvalue_Compleanno_1" type="Hidden" name="tsvalue_Compleanno_1"
-                        value="0-0-0">&nbsp;&nbsp;&nbsp;<a href="#" id="imgCal_value_Compleanno_1"><img
-                            src="images/cal.gif" width=16 height=16 border=0
-                            alt="Click Here to Pick up the date"></a><input id="type_Compleanno_1" type="hidden"
+                        value="0-0-0">&nbsp;&nbsp;&nbsp;<a href="#" id="imgCal_value_Compleanno_1"></a><input id="type_Compleanno_1" type="hidden"
                         name="type_Compleanno_1" value="date11"></span>&nbsp;</td>
             <td class="runner-cc alt"><span id="edit1_Compleanno_1" class="runner-nowrap" style="display:none""><input
                         id="value1_Compleanno_1" type="Text" name="value1_Compleanno_1" size="20"
                         value=""><input id="tsvalue1_Compleanno_1" type="Hidden" name="tsvalue1_Compleanno_1"
-                        value="0-0-0">&nbsp;&nbsp;&nbsp;<a href="#" id="imgCal_value1_Compleanno_1"><img
-                            src="images/cal.gif" width=16 height=16 border=0
-                            alt="Click Here to Pick up the date"></a><input id="type1_Compleanno_1" type="hidden"
+                        value="0-0-0">&nbsp;&nbsp;&nbsp;<a href="#" id="imgCal_value1_Compleanno_1"></a><input id="type1_Compleanno_1" type="hidden"
                         name="type1_Compleanno_1" value="date11"></span>&nbsp;</td>
             <td class="runner-cr alt"></td>
         </tr>
@@ -869,13 +865,13 @@
 
 
         <tr class="runner-bottomrow style2">
-            <td class="runner-cl"><img src="images/spacer.gif"></td>
+            <td class="runner-cl"></td>
             <td class="runner-cc"></td>
             <td class="runner-cc"></td>
             <td class="runner-cc"></td>
             <td class="runner-cc"></td>
             <td class="runner-cc"></td>
-            <td class="runner-cr"><img src="images/spacer.gif"></td>
+            <td class="runner-cr"></td>
         </tr>
     </table>
     </div>
@@ -886,9 +882,9 @@
 
 
     <tr class="runner-bottomrow style1">
-        <td class="runner-cl"><img src="images/spacer.gif"></td>
+        <td class="runner-cl"></td>
         <td class="runner-cc"></td>
-        <td class="runner-cr"><img src="images/spacer.gif"></td>
+        <td class="runner-cr"></td>
     </tr>
     </table>
     </div>

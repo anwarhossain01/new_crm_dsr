@@ -46,6 +46,18 @@ class AuthController extends Controller
 
         if ($user->Gruppo == 'Admin') {
             $information = Information::paginate(10);
+
+            session(['dataCreaz' => '',
+                'date_creation_sort' => ''
+            ]);
+
+            session(['richiedente' => '',
+                'richiedente_sort' => ''
+            ]);
+
+            session(['Agente' => '',
+                'Agente_sort' => ''
+            ]);
             return view('admin.dashboard', compact('user', 'information'));
         } elseif ($user->Gruppo == 'User') {
             $information = Information::where('Agente_ID', $user->ID)->paginate(10);
@@ -111,22 +123,24 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
-    public function Usercreate(){
+    public function Usercreate()
+    {
         return view('admin.UserCreate');
     }
 
-    public function UserCreateSubmit(Request $request){
+    public function UserCreateSubmit(Request $request)
+    {
         if ($request->password != $request->password_confirmation) {
             return redirect()->back()->with('error', 'Le passwords non corrispondono.');
         }
 
         $user = new User();
-        $user -> Nome = $request -> username;
-        $user -> Password = Hash::make($request -> password);
-        $user -> Gruppo = 'User';
-        $user -> mail = $request -> email;
+        $user->Nome = $request->username;
+        $user->Password = Hash::make($request->password);
+        $user->Gruppo = 'User';
+        $user->mail = $request->email;
         $user->Gruppo = $request->Gruppo;
-        $user -> active = true;
+        $user->active = true;
 
         $user->save();
 

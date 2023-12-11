@@ -84,22 +84,25 @@
     <div class="mb-2 flex flex-wrap items-center justify-between">
         <!-- TW Elements is free under AGPL, with commercial license required for specific uses. See more details: https://tw-elements.com/license/ and contact us for queries at tailwind@mdbootstrap.com -->
         <div class="">
-            <div class="relative mb-4 flex w-full flex-wrap items-stretch">
-                <input type="search"
-                    class="focus:border-primary dark:focus:border-primary relative m-0 -mr-0.5 block min-w-0 flex-auto rounded-l border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200"
-                    placeholder="Search" aria-label="Search" aria-describedby="button-addon1" />
+            <form action="{{ route('collab.search.admin') }}" method="get">
 
-                <!--Search button-->
-                <button
-                    class="bg-primary hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-800 relative z-[2] flex items-center rounded-r px-6 py-2.5 text-xs font-medium uppercase leading-tight text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg"
-                    type="button" id="button-addon1" data-te-ripple-init data-te-ripple-color="light">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
-                        <path fill-rule="evenodd"
-                            d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </button>
-            </div>
+                <div class="relative mb-4 flex w-full flex-wrap items-stretch">
+                    <input type="search" name="search"
+                        class="focus:border-primary dark:focus:border-primary relative m-0 -mr-0.5 block min-w-0 flex-auto rounded-l border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200"
+                        placeholder="Search" aria-label="Search" aria-describedby="button-addon1" />
+
+                    <!--Search button-->
+                    <button
+                        class="bg-primary hover:bg-primary-700 focus:bg-primary-700 active:bg-primary-800 relative z-[2] flex items-center rounded-r px-6 py-2.5 text-xs font-medium uppercase leading-tight text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg"
+                        type="submit" id="button-addon1" data-te-ripple-init data-te-ripple-color="light">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
+                            <path fill-rule="evenodd"
+                                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
         </div>
 
         <div class="flex justify-end">
@@ -216,7 +219,8 @@
                                         <div class="mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
                                             <input
                                                 class="info-checks-collab checked:border-primary checked:bg-primary dark:checked:border-primary dark:checked:bg-primary relative float-left -ml-[1.5rem] mr-[6px] mt-[0.15rem] h-[1.125rem] w-[1.125rem] appearance-none rounded-[0.25rem] border-[0.125rem] border-solid border-neutral-300 outline-none before:pointer-events-none before:absolute before:h-[0.875rem] before:w-[0.875rem] before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] checked:before:opacity-[0.16] checked:after:absolute checked:after:-mt-px checked:after:ml-[0.25rem] checked:after:block checked:after:h-[0.8125rem] checked:after:w-[0.375rem] checked:after:rotate-45 checked:after:border-[0.125rem] checked:after:border-l-0 checked:after:border-t-0 checked:after:border-solid checked:after:border-white checked:after:bg-transparent checked:after:content-[''] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:transition-[border-color_0.2s] focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-[0.875rem] focus:after:w-[0.875rem] focus:after:rounded-[0.125rem] focus:after:content-[''] checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:after:-mt-px checked:focus:after:ml-[0.25rem] checked:focus:after:h-[0.8125rem] checked:focus:after:w-[0.375rem] checked:focus:after:rotate-45 checked:focus:after:rounded-none checked:focus:after:border-[0.125rem] checked:focus:after:border-l-0 checked:focus:after:border-t-0 checked:focus:after:border-solid checked:focus:after:border-white checked:focus:after:bg-transparent dark:border-neutral-600 dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
-                                                type="checkbox" onclick="Checkbox({{ $u->ID }})" value="{{ $u->ID }}" id="checkboxDefault" />
+                                                type="checkbox" onclick="Checkbox({{ $u->ID }})"
+                                                value="{{ $u->ID }}" id="checkboxDefault" />
 
                                         </div>
                                     </td>
@@ -236,7 +240,7 @@
             </div>
         </div>
     </div>
- {{ $users->links() }}
+    {{ $users->links() }}
 
     <script>
         function showData(id, nome, mail, notes) {
@@ -246,7 +250,7 @@
 
             if (notes) {
                 document.getElementById('exampleFormControlTextarea1').value = notes;
-            }else{
+            } else {
                 document.getElementById('exampleFormControlTextarea1').value = '';
 
             }
@@ -255,7 +259,7 @@
     </script>
 
     <script>
-         let checkInputs = [];
+        let checkInputs = [];
         let allChecked = false;
 
         function Checkbox(id) {
@@ -326,6 +330,48 @@
             // Submit the form
             form.submit();
 
+        }
+    </script>
+
+    <script>
+        function exportSelections() {
+            if (checkInputs.length == 0) {
+                return;
+            }
+
+            // Create a form element
+            var form = document.createElement('form');
+            form.method = 'POST'; // Use POST method
+
+            form.action = '{{ route('export.choose') }}';
+
+            // Create an input for CSRF token
+            var csrfTokenInput = document.createElement('input');
+            csrfTokenInput.type = 'hidden';
+            csrfTokenInput.name = '_token';
+            csrfTokenInput.value = '{{ csrf_token() }}';
+            form.appendChild(csrfTokenInput);
+
+            // Create an input element for each ID
+            checkInputs.forEach(function(id) {
+                var input = document.createElement('input');
+                input.type = 'hidden'; // Hidden input
+                input.name = 'ids[]'; // Use an array for multiple values
+                input.value = id;
+                form.appendChild(input);
+            });
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'type';
+            input.value = 'collab';
+            form.appendChild(input);
+
+            // Append the form to the body
+            document.body.appendChild(form);
+
+            // Submit the form
+            form.submit();
         }
     </script>
 @endsection

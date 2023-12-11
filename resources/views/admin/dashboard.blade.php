@@ -10,6 +10,12 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="bg-danger-100 text-danger-700 mb-4 rounded-lg px-6 py-5 text-base" role="alert">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="mb-2 flex flex-wrap items-center justify-between">
         <!-- TW Elements is free under AGPL, with commercial license required for specific uses. See more details: https://tw-elements.com/license/ and contact us for queries at tailwind@mdbootstrap.com -->
         <div class="">
@@ -50,7 +56,7 @@
                 Stampa la selezione
             </button>
 
-            <button type="button"
+            <button type="button" onclick="exportSelections(this)"
                 class="bg-info hover:bg-info-600 focus:bg-info-600 active:bg-info-700 mr-2 inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]">
                 Esporta la selezione
             </button>
@@ -108,6 +114,10 @@
                     <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-neutral-600"
                         href="{{ route('index.pg', 50) }}" data-te-dropdown-item-ref>50</a>
                 </li>
+                <li>
+                    <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-neutral-600"
+                        href="{{ route('index.pg', 100) }}" data-te-dropdown-item-ref>100</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -126,9 +136,33 @@
                                             type="checkbox" onclick="addAllCheckbox()" value="" />
                                     </div>
                                 </th>
-                                <th scope="col" class="px-6 py-4">Data Modifica</th>
-                                <th scope="col" class="px-6 py-4">Stato</th>
-                                <th scope="col" class="px-6 py-4">Richiedente</th>
+                                <th scope="col" class="px-6 py-4 hover:underline">
+                                    <a
+                                        href="{{ route('dateModification', ['sort' => session('date_creation_sort') === 'asc' ? 'desc' : 'asc']) }}">
+                                        Data Modifica
+                                        @if (session('dataCreaz'))
+                                            {!! session('dataCreaz') !!} <!-- This will render the SVG icon -->
+                                        @endif
+                                    </a>
+                                </th>
+                                <th scope="col" class="px-6 py-4 hover:underline">
+                                    <a
+                                        href="{{ route('stato', ['sort' => session('Agente_sort') === 'asc' ? 'desc' : 'asc']) }}">
+                                        Stato
+                                        @if (session('Agente'))
+                                            {!! session('Agente') !!} <!-- This will render the SVG icon -->
+                                        @endif
+                                    </a>
+                                </th>
+                                <th scope="col" class="px-6 py-4 hover:underline">
+                                    <a
+                                        href="{{ route('richiedente', ['sort' => session('richiedente_sort') === 'asc' ? 'desc' : 'asc']) }}">
+                                        Richiedente
+                                        @if (session('richiedente'))
+                                            {!! session('richiedente') !!} <!-- This will render the SVG icon -->
+                                        @endif
+                                    </a>
+                                </th>
                                 <th scope="col" class="px-6 py-4">Assegnato</th>
                                 <th scope="col" class="px-6 py-4">Azienda</th>
                                 <th scope="col" class="px-6 py-4">Telefono</th>
@@ -164,11 +198,8 @@
                                                 class="info-checks checked:border-primary checked:bg-primary dark:checked:border-primary dark:checked:bg-primary relative float-left -ml-[1.5rem] mr-[6px] mt-[0.15rem] h-[1.125rem] w-[1.125rem] appearance-none rounded-[0.25rem] border-[0.125rem] border-solid border-neutral-300 outline-none before:pointer-events-none before:absolute before:h-[0.875rem] before:w-[0.875rem] before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] checked:before:opacity-[0.16] checked:after:absolute checked:after:-mt-px checked:after:ml-[0.25rem] checked:after:block checked:after:h-[0.8125rem] checked:after:w-[0.375rem] checked:after:rotate-45 checked:after:border-[0.125rem] checked:after:border-l-0 checked:after:border-t-0 checked:after:border-solid checked:after:border-white checked:after:bg-transparent checked:after:content-[''] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:transition-[border-color_0.2s] focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-[0.875rem] focus:after:w-[0.875rem] focus:after:rounded-[0.125rem] focus:after:content-[''] checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:after:-mt-px checked:focus:after:ml-[0.25rem] checked:focus:after:h-[0.8125rem] checked:focus:after:w-[0.375rem] checked:focus:after:rotate-45 checked:focus:after:rounded-none checked:focus:after:border-[0.125rem] checked:focus:after:border-l-0 checked:focus:after:border-t-0 checked:focus:after:border-solid checked:focus:after:border-white checked:focus:after:bg-transparent dark:border-neutral-600 dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
                                                 type="checkbox" value="{{ $info->ID }}"
                                                 onclick="Checkbox({{ $info->ID }})" id="checkboxDefault" />
-
                                         </div>
                                     </td>
-
-
 
                                     <td class="whitespace-nowrap px-6 py-4 font-medium">
                                         {{ \Carbon\Carbon::parse($info->datamodif)->format('d/n/Y') }}
@@ -187,7 +218,6 @@
                                     <td class="whitespace-nowrap px-6 py-4">{{ $info->Tip_Cliente }}</td>
                                     <td class="whitespace-nowrap px-6 py-4 font-medium">
                                         {{ \Carbon\Carbon::parse($info->Data_Creaz)->format('d/n/Y \a\t h:i:s A') }}
-
                                     </td>
 
                                 </tr>
@@ -306,6 +336,48 @@
                 input.value = id;
                 form.appendChild(input);
             });
+
+            // Append the form to the body
+            document.body.appendChild(form);
+
+            // Submit the form
+            form.submit();
+        }
+    </script>
+
+    <script>
+        function exportSelections() {
+            if (checkInputs.length == 0) {
+                return;
+            }
+
+            // Create a form element
+            var form = document.createElement('form');
+            form.method = 'POST'; // Use POST method
+
+            form.action = '{{ route('export.choose') }}';
+
+            // Create an input for CSRF token
+            var csrfTokenInput = document.createElement('input');
+            csrfTokenInput.type = 'hidden';
+            csrfTokenInput.name = '_token';
+            csrfTokenInput.value = '{{ csrf_token() }}';
+            form.appendChild(csrfTokenInput);
+
+            // Create an input element for each ID
+            checkInputs.forEach(function(id) {
+                var input = document.createElement('input');
+                input.type = 'hidden'; // Hidden input
+                input.name = 'ids[]'; // Use an array for multiple values
+                input.value = id;
+                form.appendChild(input);
+            });
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'type';
+            input.value = 'anagraph';
+            form.appendChild(input);
 
             // Append the form to the body
             document.body.appendChild(form);

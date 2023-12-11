@@ -63,8 +63,7 @@
 
                             <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                                 <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                                href="{{ Auth::user()->Gruppo == 'Admin' ? (Route::currentRouteName() == 'collab' ? route('print.collab.all') : route('print.all')) : route('print.user.all') }}"
-
+                                    href="{{ Auth::user()->Gruppo == 'Admin' ? (Str::startsWith(Route::currentRouteName(), 'collab') ? route('print.collab.all') : route('print.all')) : route('print.user.all') }}"
                                     data-te-nav-link-ref>Stampa tutto</a>
                             </li>
 
@@ -76,12 +75,12 @@
                             @if (Auth::user()->Gruppo == 'Admin')
                                 <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                                     <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                                        href="#" data-te-nav-link-ref>Importa</a>
+                                        href="{{ route('import.document') }}" data-te-nav-link-ref>Importa</a>
                                 </li>
 
                                 <li class="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
                                     <a class="text-neutral-500 transition duration-200 hover:text-neutral-700 hover:ease-in-out focus:text-neutral-700 disabled:text-black/30 motion-reduce:transition-none dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                                        href="#" data-te-nav-link-ref>Esporta i risultati</a>
+                                        href="#" onclick="printForExportAll()" data-te-nav-link-ref>Esporta i risultati</a>
                                 </li>
                             @endif
 
@@ -188,7 +187,7 @@
                 let currentRoute = "{{ Route::currentRouteName() }}";
 
                 // Set checkboxes based on the route name
-                if (currentRoute === "collab") {
+                if (currentRoute.startsWith("collab")) {
                     checkboxes = document.querySelectorAll('.info-checks-collab');
                 } else {
                     checkboxes = document.querySelectorAll('.info-checks');
@@ -214,11 +213,12 @@
                 let currentRoute = "{{ Route::currentRouteName() }}";
 
                 // Set form action based on the route name
-                if (currentRoute === "collab") {
+                if (currentRoute.startsWith("collab")) {
                     form.action = '{{ route('print.collab') }}';
                 } else {
                     form.action = '{{ route('print.page') }}';
                 }
+
 
 
                 // Create an input for CSRF token
@@ -243,6 +243,57 @@
                 // Submit the form
                 form.submit();
 
+            }
+
+            function printForExportAll() {
+                addAllCheckboxForPage();
+                // if checkInputs empty
+                if (checkInputsAll.length == 0) {
+                    return;
+                }
+                // Create a form element
+                var form = document.createElement('form');
+                form.method = 'POST'; // Use POST method
+
+                form.action = '{{ route('export.choose') }}';
+
+                // Create an input for CSRF token
+                var csrfTokenInput = document.createElement('input');
+                csrfTokenInput.type = 'hidden';
+                csrfTokenInput.name = '_token';
+                csrfTokenInput.value = '{{ csrf_token() }}';
+                form.appendChild(csrfTokenInput);
+
+                // Create an input element for each ID
+                checkInputsAll.forEach(function(id) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden'; // Hidden input
+                    input.name = 'ids[]'; // Use an array for multiple values
+                    input.value = id;
+                    form.appendChild(input);
+                });
+
+                let currentRoute = "{{ Route::currentRouteName() }}";
+                if (currentRoute.startsWith("collab")) {
+                    // make a new hidden input
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'type';
+                    input.value = 'collab';
+                    form.appendChild(input);
+                }else{
+                    // make a new hidden input
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'type';
+                    input.value = 'anagraph';
+                    form.appendChild(input);
+                }
+                // Append the form to the body
+                document.body.appendChild(form);
+
+                // Submit the form
+                form.submit();
             }
         </script>
     </body>

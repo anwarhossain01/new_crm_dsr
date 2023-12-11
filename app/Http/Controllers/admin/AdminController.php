@@ -9,8 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\InformationExport;
+
 
 class AdminController extends Controller
 {
@@ -99,7 +98,7 @@ class AdminController extends Controller
     public function NewInfo(Request $request)
     {
 
-      
+
         $info = new Information();
         $info->richiedente = $request->richiedente;
         if (auth()->user()->Gruppo === 'User') {
@@ -186,10 +185,7 @@ class AdminController extends Controller
         return redirect()->route('index')->with('success', 'Done !');
     }
 
-    public function exportXl()
-    {
-        return Excel::download(new InformationExport, 'users.xlsx');
-    }
+
 
     public function PasswordChange()
     {
@@ -223,7 +219,21 @@ class AdminController extends Controller
         return view('searchAdvance');
     }
 
-    public function PrintCollab(Request $request){
+    public function collabSearchAdmin(Request $request)
+    {
+        $searchTerm = $request->input('search');
+
+        $user = Auth::user();
+        $users = User::where('Nome', 'like', '%' . $searchTerm . '%')
+            ->orWhere('mail', 'like', '%' . $searchTerm . '%')
+            ->paginate(10);
+
+        return view('admin.collab', compact('user', 'users'));
+
+    }
+
+    public function PrintCollab(Request $request)
+    {
         $ids = $request->input('ids');
 
         $users = User::whereIn('ID', $ids)->get();
@@ -231,9 +241,106 @@ class AdminController extends Controller
         return view('admin.printCollab', compact('users'));
     }
 
-    public function PrintCollabAll(){
+    public function PrintCollabAll()
+    {
         $users = User::get();
         return view('admin.printCollab', compact('users'));
 
+    }
+
+    public function SortDateModification($sort)
+    {
+
+        $user = Auth::user();
+        $information = Information::orderBy('Data_Creaz', $sort)->paginate(10);
+        // set svg icon for data_Creaz to session
+
+        session(['richiedente' => '',
+            'richiedente_sort' => ''
+        ]);
+
+        session(['Agente' => '',
+            'Agente_sort' => ''
+        ]);
+        
+        if ($sort === 'asc') {
+            session(['dataCreaz' => '<svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
+          </svg>',
+                'date_creation_sort' => 'asc'
+            ]);
+        } elseif ($sort === 'desc') {
+            session(['dataCreaz' => '<svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1v12m0 0 4-4m-4 4L1 9"/>
+          </svg>'
+                ,
+                'date_creation_sort' => 'desc']);
+
+        }
+
+        return view('admin.dashboard', compact('user', 'information'));
+    }
+
+    public function SortStato($sort)
+    {
+        $user = Auth::user();
+        $information = Information::orderBy('Agente', $sort)->paginate(10);
+        // set svg icon for data_Creaz to session
+        session(['dataCreaz' => '',
+            'date_creation_sort' => ''
+        ]);
+
+        session(['richiedente' => '',
+            'richiedente_sort' => ''
+        ]);
+
+        if ($sort === 'asc') {
+            session(['Agente' => '<svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
+          </svg>',
+                'Agente_sort' => 'asc'
+            ]);
+        } elseif ($sort === 'desc') {
+            session(['Agente' => '<svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1v12m0 0 4-4m-4 4L1 9"/>
+          </svg>'
+                ,
+                'Agente_sort' => 'desc']);
+
+        }
+
+        return view('admin.dashboard', compact('user', 'information'));
+    }
+
+    public function SortRichiedente($sort)
+    {
+        $user = Auth::user();
+        $information = Information::orderBy('richiedente', $sort)->paginate(10);
+        // set svg icon for data_Creaz to session
+
+        session(['dataCreaz' => '',
+            'date_creation_sort' => ''
+        ]);
+
+
+        session(['Agente' => '',
+            'Agente_sort' => ''
+        ]);
+        if ($sort === 'asc') {
+            session(['richiedente' => '<svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
+          </svg>',
+                'richiedente_sort' => 'asc'
+            ]);
+        } elseif ($sort === 'desc') {
+            session(['richiedente' => '<svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1v12m0 0 4-4m-4 4L1 9"/>
+          </svg>'
+                ,
+                'richiedente_sort' => 'desc']);
+
+        }
+
+        return view('admin.dashboard', compact('user', 'information'));
     }
 }
