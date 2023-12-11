@@ -67,8 +67,12 @@ Route::get('search/collab/admin', [AdminController::class, 'collabSearchAdmin'])
 Route::get('/search/advance', [AdminController::class, 'AdvanceSearch'])->name('search.advance')->middleware('auth');
 
 //password
-Route::get('/password/change', [AdminController::class, 'PasswordChange'])->name('password.change')->middleware('auth');
-Route::post('/password/change/submit', [AdminController::class, 'PasswordChangeSubmit'])->name('password.change.submit')->middleware('auth');
+Route::get('/password/change/{uid}', [AdminController::class, 'PasswordChange'])->name('password.change');
+Route::get('/password/Forgot/change/{uid}', [AuthController::class, 'passwordForgotChange'] )->name('password.forgot.change');
+Route::post('/password/change/submit', [AdminController::class, 'PasswordChangeSubmit'])->name('password.change.submit');
+Route::get('/password/forgot', [AuthController::class, 'ForgotPassword'])->name('password.forgot');
+Route::post('/password/forgot/submit', [AuthController::class, 'ForgotPasswordSubmit'])->name('password.forgot.submit');
+
 
 // import routes
 Route::get('/import/document', [ExportController::class, 'ImportDocument'])->name('import.document')->middleware('auth');

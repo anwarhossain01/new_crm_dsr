@@ -4,10 +4,12 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Information;
+use App\Models\Password_Reset;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -145,6 +147,40 @@ class AuthController extends Controller
         $user->save();
 
         return redirect()->route('index')->with('success', 'Utente creato con successo!');
+    }
+
+    public function ForgotPassword()
+    {
+        return view('ForgotPassword');
+    }
+
+    public function passwordForgotChange($uid)
+    {
+        return view('passwordForgotChange', compact('uid'));
+    }
+
+    public function ForgotPasswordSubmit(Request $request)
+    {
+        $user = User::where('Nome', $request->username)->first();
+        // generate random 6 digit code
+        $code = rand(100000, 999999);
+
+        $password_reset = Password_Reset::create([
+            'token' => $code,
+            'created_at' => now(),
+           
+        ]);
+
+        if ($user) {
+            Mail::raw('Use Code: ' . $code, function ($message) use ($user) {
+                $message->to($user->mail)->subject('Password Reset');
+            });
+        
+            return redirect()->route('password.forgot.change', $user->ID)->with('success', 'Please check your email and input the code');
+        }else {
+            return redirect()->back()->with('error', 'User Not Found , Please use correct username!');
+
+        }
     }
 
 }

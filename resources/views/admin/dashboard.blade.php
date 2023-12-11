@@ -19,7 +19,7 @@
     <div class="mb-2 flex flex-wrap items-center justify-between">
         <!-- TW Elements is free under AGPL, with commercial license required for specific uses. See more details: https://tw-elements.com/license/ and contact us for queries at tailwind@mdbootstrap.com -->
         <div class="">
-            <form action="{{ route('index.search') }}" method="post">
+            <form action="{{ route('index.search') }}" method="get">
                 @csrf
                 <div class="relative mb-4 flex w-full flex-wrap items-stretch">
 

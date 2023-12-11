@@ -117,7 +117,7 @@
                                 <!-- Second dropdown menu items -->
                                 <li>
                                     <a class="flex w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-white/30"
-                                        href="{{ route('password.change') }}" data-te-dropdown-item-ref>
+                                        href="{{ route('password.change', Auth::user()->ID) }}" data-te-dropdown-item-ref>
                                         <svg class="mr-2 h-4 w-4 text-gray-800 dark:text-white" aria-hidden="true"
                                             viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path

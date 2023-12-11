@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Information;
+use App\Models\Password_Reset;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -187,9 +188,9 @@ class AdminController extends Controller
 
 
 
-    public function PasswordChange()
+    public function PasswordChange($uid)
     {
-        return view('passwordChange');
+        return view('passwordChange', compact('uid'));
     }
 
     public function PasswordChangeSubmit(Request $request)
@@ -197,16 +198,29 @@ class AdminController extends Controller
         $old_password = $request->old_password;
         $new_password = $request->new_password;
         $confirm_password = $request->confirm_password;
+        $code = $request->code;
 
-        if (!Hash::check($old_password, Auth::user()->Password)) {
-            return redirect()->back()->with('error', 'Old password does not match!');
+        if($old_password){
+            if (!Hash::check($old_password, User::find($request->user_id)->Password)) {
+                return redirect()->back()->with('error', 'Old password does not match!');
+            }
         }
+        if($code){
+            $pass_reset = Password_Reset::where('token', $code)->first();
+            if (!$pass_reset) {
+                return redirect()->back()->with('error', 'Code does not match!');
+            }
+
+            // else delete the code
+            $pass_reset->delete();
+        }
+        
 
         if ($new_password != $confirm_password) {
             return redirect()->back()->with('error', 'New password and confirm password does not match!');
         }
 
-        $user = Auth::user();
+        $user = User::find($request->user_id);
         $user->Password = Hash::make($new_password);
         $user->save();
 

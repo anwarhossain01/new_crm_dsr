@@ -22,11 +22,11 @@
 --     failed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 -- );
 
--- CREATE TABLE password_reset_tokens (
---     email VARCHAR(255) PRIMARY KEY,
---     token VARCHAR(255),
---     created_at TIMESTAMP NULL
--- );
+ CREATE TABLE password_reset_tokens (
+   id BIGINT PRIMARY KEY AUTO_INCREMENT,
+     token VARCHAR(255),
+    created_at TIMESTAMP NULL
+ );
 ALTER TABLE Utenze
 MODIFY Password VARCHAR(250);
 
