@@ -46,7 +46,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        if ($user->Gruppo == 'Admin') {
+        if ($user->Gruppo == 'Admin' || $user->Gruppo == 'Power') {
             $information = Information::paginate(10);
 
             session(['dataCreaz' => '',
