@@ -268,7 +268,6 @@ class AdminController extends Controller
         $user = Auth::user();
         $information = Information::orderBy('Data_Creaz', $sort)->paginate(10);
         // set svg icon for data_Creaz to session
-
         session(['richiedente' => '',
             'richiedente_sort' => ''
         ]);

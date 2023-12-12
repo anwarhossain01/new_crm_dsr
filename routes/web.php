@@ -73,7 +73,6 @@ Route::post('/password/change/submit', [AdminController::class, 'PasswordChangeS
 Route::get('/password/forgot', [AuthController::class, 'ForgotPassword'])->name('password.forgot');
 Route::post('/password/forgot/submit', [AuthController::class, 'ForgotPasswordSubmit'])->name('password.forgot.submit');
 
-
 // import routes
 Route::get('/import/document', [ExportController::class, 'ImportDocument'])->name('import.document')->middleware('auth');
 Route::post('/import/submit' , [ExportController::class, 'ImportDocumentSubmit'])->name('import.submit')->middleware('auth');
