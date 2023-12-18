@@ -233,6 +233,10 @@ class AdminController extends Controller
         return view('searchAdvance');
     }
 
+    public function AdvanceSearchSubmit(Request $request){
+        dd($request->all());
+    }
+
     public function collabSearchAdmin(Request $request)
     {
         $searchTerm = $request->input('search');
