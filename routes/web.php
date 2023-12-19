@@ -65,6 +65,7 @@ Route::get('/search/index', [AdminController::class, 'IndexSearch'])->name('inde
 Route::get('/search/collab', [UserController::class, 'CollabSearch'])->name('collab.search')->middleware('auth');
 Route::get('search/collab/admin', [AdminController::class, 'collabSearchAdmin'])->name('collab.search.admin')->middleware('auth');
 Route::get('/search/advance', [AdminController::class, 'AdvanceSearch'])->name('search.advance')->middleware('auth');
+Route::post('/search/advance/submit', [AdminController::class, 'AdvanceSearchSubmit'])->name('search.advance.submit')->middleware('auth');
 
 //password
 Route::get('/password/change/{uid}', [AdminController::class, 'PasswordChange'])->name('password.change');

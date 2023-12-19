@@ -14,6 +14,34 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+    private function applyFilter($query, $filterOption, $fieldName, $filterValue)
+    {
+
+            switch ($filterOption) {
+                case 'Contains':
+                    $query->where($fieldName, 'like', '%' . $filterValue . '%');
+                    break;
+                case 'Equals':
+                    $query->where($fieldName, $filterValue);
+                    break;
+                case 'Starts_with':
+                    $query->where($fieldName, 'like', $filterValue . '%');
+                    break;
+                case 'More_than':
+                    $query->where($fieldName, '>', $filterValue);
+                    break;
+                case 'Less_than':
+                    $query->where($fieldName, '<', $filterValue);
+                    break;
+                case 'Between':
+                    // Assuming $filterValue is an array with two values
+                    $query->whereBetween($fieldName, $filterValue);
+                    break;
+                case 'Empty':
+                    $query->whereNull($fieldName);
+                    break;
+                }
+        }
 
     public function collab()
     {
@@ -234,7 +262,19 @@ class AdminController extends Controller
     }
 
     public function AdvanceSearchSubmit(Request $request){
-        dd($request->all());
+    dd($request->all());
+      $query = Information::query();
+
+      // director note option
+      $selection = $request->note_direttore_selection; 
+      if ($request->has('not_note_direttore') && $request->Note_Direttore) {
+          
+      }elseif($request->Note_Direttore){
+        $this->applyFilter($query, $selection, 'Notedir', $request->Note_Direttore);
+      }
+
+      $user = Auth::user();
+      return view('admin.dashboard', compact('user', 'information'));
     }
 
     public function collabSearchAdmin(Request $request)
