@@ -112,23 +112,6 @@
             'selection2_name' => 'agente_richiedente_selection_user',
         ])
 
-        @include('layout.templates.formTemplates.GridSelection', [
-            'title' => ' Agente Assegnato',
-            'name' => 'Agente_Assegnato',
-            'selection1' => $selection_equal,
-            'selection2' => $selection_user,
-            'not_name' => 'not_agente_assegnato',
-            'selection1_name' => 'agente_assegnato_selection_1',
-            'selection2_name' => 'agente_assegnato_selection_user',
-        ])
-
-        @include('layout.templates.formTemplates.GridInput', [
-            'title' => ' Data Creazione',
-            'name' => 'date_creation',
-            'selection' => $selection_half,
-            'not_name' => 'not_date_creation',
-            'selection_name' => 'date_creation_selection',
-        ])
 
         @include('layout.templates.formTemplates.GridSelectionNormal', [
             'title' => ' Tipologia Cliente',
@@ -209,7 +192,7 @@
             'title' => ' 	Part. Eventi',
             'name' => 'Part_Eventi',
             'selection1' => $selection_equal,
-            'selection2' => ['Si' => 'Si', 'No' => 'No'],
+            'selection2' => ['SI' => 'SI', 'not_azienda' => 'not_azienda'],
             'not_name' => 'not_part_eventi',
             'selection1_name' => 'part_eventi_selection_1',
             'selection2_name' => 'part_eventi_selection_2',
@@ -239,13 +222,6 @@
             'selection_name' => 'posizione_az_selection',
         ])
 
-        @include('layout.templates.formTemplates.GridInput', [
-            'title' => 'Cellulare',
-            'name' => 'Cellulare',
-            'selection' => $selection_options_all,
-            'not_name' => 'not_cellulare',
-            'selection_name' => 'cellulare_selection',
-        ])
 
         @include('layout.templates.formTemplates.GridInput', [
             'title' => 'Telefono Uff.',
