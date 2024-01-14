@@ -61,7 +61,7 @@
                 Esporta la selezione
             </button>
             <button type="button" onclick="deleteSelections()"
-                class="bg-info hover:bg-info-600 focus:bg-info-600 active:bg-info-700 mr-2 inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]">
+                class="bg-danger hover:bg-danger-600 focus:bg-danger-600 active:bg-danger-700 mr-2 inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#ff3300] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]">
                 Cancella selezione
             </button>
 
@@ -310,38 +310,44 @@
 
 
         function deleteSelections() {
-            // if checkInputs empty
-            if (checkInputs.length == 0) {
 
-                return;
+            const confirmation = confirm("Sei sicuro/a di voler cancellare questi elementi?");
+
+            if (confirmation) {
+                if (checkInputs.length == 0) {
+                    return;
+                }
+                // Create a form element
+                var form = document.createElement('form');
+                form.method = 'POST'; // Use POST method
+                form.action = '{{ route('info.delete') }}';
+
+                // Create an input for CSRF token
+                var csrfTokenInput = document.createElement('input');
+                csrfTokenInput.type = 'hidden';
+                csrfTokenInput.name = '_token';
+                csrfTokenInput.value = '{{ csrf_token() }}';
+                form.appendChild(csrfTokenInput);
+
+                // Create an input element for each ID
+                checkInputs.forEach(function(id) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden'; // Hidden input
+                    input.name = 'ids[]'; // Use an array for multiple values
+                    input.value = id;
+                    form.appendChild(input);
+                });
+
+                // Append the form to the body
+                document.body.appendChild(form);
+
+                // Submit the form
+                form.submit();
+            } else {
+                // User clicked 'Cancel' (no), do nothing
+                console.log("Phew! Nothing got deleted. (´•̥̥̥ω•̥̥̥`)");
             }
 
-            // Create a form element
-            var form = document.createElement('form');
-            form.method = 'POST'; // Use POST method
-            form.action = '{{ route('info.delete') }}';
-
-            // Create an input for CSRF token
-            var csrfTokenInput = document.createElement('input');
-            csrfTokenInput.type = 'hidden';
-            csrfTokenInput.name = '_token';
-            csrfTokenInput.value = '{{ csrf_token() }}';
-            form.appendChild(csrfTokenInput);
-
-            // Create an input element for each ID
-            checkInputs.forEach(function(id) {
-                var input = document.createElement('input');
-                input.type = 'hidden'; // Hidden input
-                input.name = 'ids[]'; // Use an array for multiple values
-                input.value = id;
-                form.appendChild(input);
-            });
-
-            // Append the form to the body
-            document.body.appendChild(form);
-
-            // Submit the form
-            form.submit();
         }
     </script>
 
