@@ -7,6 +7,7 @@ use App\Models\Information;
 use App\Models\Password_Reset;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -161,7 +162,9 @@ class AuthController extends Controller
 
     public function ForgotPasswordSubmit(Request $request)
     {
-        $user = User::where('Nome', $request->username)->first();
+     //   dd($request->all());
+        $user = User::where('Nome', $request->username)->orWhere('mail', $request->username)->first();
+    
         // generate random 6 digit code
         $code = rand(100000, 999999);
 
@@ -172,13 +175,14 @@ class AuthController extends Controller
         ]);
 
         if ($user) {
-            Mail::raw('Use Code: ' . $code, function ($message) use ($user) {
-                $message->to($user->mail)->subject('Password Reset');
+   
+            Mail::raw('Code: ' . $code, function (Message $message) use($user) {
+                $message->to($user->mail)->from(env('MAIL_FROM_NAME'));
             });
         
             return redirect()->route('password.forgot.change', $user->ID)->with('success', 'Please check your email and input the code');
         }else {
-            return redirect()->back()->with('error', 'User Not Found , Please use correct username!');
+            return redirect()->back()->with('error', 'User Not Found , Please use correct credentials!');
 
         }
     }

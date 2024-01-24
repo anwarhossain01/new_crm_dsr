@@ -31,3 +31,6 @@ ALTER TABLE Utenze
 MODIFY Password VARCHAR(250);
 
 ALTER TABLE `anagrafiche` CHANGE `Brand/Prodotto` `Brand` VARCHAR(50) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL; 
+
+ALTER TABLE utenze
+ADD remember_token VARCHAR(100);
