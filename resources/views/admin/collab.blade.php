@@ -1,6 +1,8 @@
 @extends('layout.master')
 
 @section('content')
+    <!--User modal-->
+    @include('layout.templates.user_view_modal')
     <!--Extra large modal-->
     <div data-te-modal-init
         class="fixed left-0 top-0 z-[1055] hidden h-full w-full overflow-y-auto overflow-x-hidden outline-none"
@@ -66,12 +68,12 @@
                     <button type="button"
                         class="bg-primary-100 text-primary-700 hover:bg-primary-accent-100 focus:bg-primary-accent-100 active:bg-primary-accent-200 inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal transition duration-150 ease-in-out focus:outline-none focus:ring-0"
                         data-te-modal-dismiss data-te-ripple-init data-te-ripple-color="light">
-                        Close
+                        Indietro
                     </button>
                     <button type="submit"
                         class="bg-primary hover:bg-primary-600 focus:bg-primary-600 active:bg-primary-700 ml-1 inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                         data-te-ripple-init data-te-ripple-color="light">
-                        Save changes
+                        Salva
                     </button>
                     </form>
                 </div>
@@ -88,8 +90,8 @@
 
                 <div class="relative mb-4 flex w-full flex-wrap items-stretch">
                     <input type="search" name="search"
-                        class="focus:border-primary dark:focus:border-primary relative m-0 -mr-0.5 block min-w-0 flex-auto rounded-l border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200"
-                        placeholder="Search" aria-label="Search" aria-describedby="button-addon1" />
+                        class="button-search focus:border-primary dark:focus:border-primary relative m-0 -mr-0.5 block min-w-0 flex-auto rounded-l border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200"
+                        placeholder="Cerca" aria-label="Search" aria-describedby="button-addon1" />
 
                     <!--Search button-->
                     <button
@@ -109,7 +111,7 @@
 
             <button type="button" onclick="printSelections()"
                 class="bg-info hover:bg-info-600 focus:bg-info-600 active:bg-info-700 mr-2 inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]">
-                Stampa la selezione
+                Stampa selezione
             </button>
 
         </div>
@@ -120,25 +122,25 @@
             <div class="mr-2 inline-flex rounded-md transition duration-150 ease-in-out hover:bg-neutral-100 hover:shadow-[0_8px_9px_-4px_rgba(203,203,203,0.3),0_4px_18px_0_rgba(203,203,203,0.2)] focus:bg-neutral-100 focus:shadow-[0_8px_9px_-4px_rgba(203,203,203,0.3),0_4px_18px_0_rgba(203,203,203,0.2)] focus:outline-none focus:ring-0 active:bg-neutral-200 active:shadow-[0_8px_9px_-4px_rgba(203,203,203,0.3),0_4px_18px_0_rgba(203,203,203,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(251,251,251,0.3)] dark:hover:shadow-[0_8px_9px_-4px_rgba(251,251,251,0.1),0_4px_18px_0_rgba(251,251,251,0.05)] dark:focus:shadow-[0_8px_9px_-4px_rgba(251,251,251,0.1),0_4px_18px_0_rgba(251,251,251,0.05)] dark:active:shadow-[0_8px_9px_-4px_rgba(251,251,251,0.1),0_4px_18px_0_rgba(251,251,251,0.05)]"
                 role="group">
                 <a href="{{ route('index') }}"
-                    class="{{ request()->routeIs('index') ? 'bg-neutral-300' : 'bg-neutral-50' }} inline-block cursor-pointer rounded-l px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-neutral-800 transition duration-150 ease-in-out hover:bg-neutral-200 focus:bg-neutral-200 focus:outline-none focus:ring-0"
+                    class="{{ request()->routeIs('index') ? 'bg-neutral-300 btnonattivo' : 'bg-neutral-50 btattivo' }} inline-block cursor-pointer rounded-l px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-neutral-800 transition duration-150 ease-in-out hover:bg-neutral-200 focus:bg-neutral-200 focus:outline-none focus:ring-0"
                     data-te-ripple-init data-te-ripple-color="light">
                     Anagrafiche
                 </a>
 
                 <a href="{{ route('collab') }}"
-                    class="{{ request()->routeIs('collab') ? 'bg-neutral-300' : 'bg-neutral-50' }} inline-block cursor-pointer px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-neutral-800 transition duration-150 ease-in-out hover:bg-neutral-200 focus:bg-neutral-200 focus:outline-none focus:ring-0"
+                    class="{{ request()->routeIs('collab') ? 'bg-neutral-300 btnonattivo' : 'bg-neutral-50 btattivo' }} inline-block cursor-pointer px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-neutral-800 transition duration-150 ease-in-out hover:bg-neutral-200 focus:bg-neutral-200 focus:outline-none focus:ring-0"
                     data-te-ripple-init data-te-ripple-color="light">
                     Collaboratori
                 </a>
             </div>
         </div>
 
-        <div class="relative" data-te-dropdown-ref>
+        <div class="nrecord relative" data-te-dropdown-ref>
             <button
                 class="flex items-center whitespace-nowrap rounded bg-neutral-50 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-neutral-800 shadow-[0_4px_9px_-4px_#fbfbfb] transition duration-150 ease-in-out hover:bg-neutral-100 hover:shadow-[0_8px_9px_-4px_rgba(251,251,251,0.3),0_4px_18px_0_rgba(251,251,251,0.2)] focus:bg-neutral-100 focus:shadow-[0_8px_9px_-4px_rgba(251,251,251,0.3),0_4px_18px_0_rgba(251,251,251,0.2)] focus:outline-none focus:ring-0 active:bg-neutral-200 active:shadow-[0_8px_9px_-4px_rgba(251,251,251,0.3),0_4px_18px_0_rgba(251,251,251,0.2)] motion-reduce:transition-none"
                 type="button" id="dropdownMenuButton9" data-te-dropdown-toggle-ref aria-expanded="false"
                 data-te-ripple-init>
-                Record per pagina
+                Risultati per pagina
                 <span class="ml-2 w-2">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5">
                         <path fill-rule="evenodd"
@@ -171,7 +173,8 @@
                     <table class="min-w-full overflow-auto text-left text-sm font-light">
                         <thead class="border-b bg-white font-medium dark:border-neutral-500 dark:bg-neutral-600">
                             <tr>
-                                <th scope="col" class="px-6 py-4">Actions</th>
+                                <th scope="col" class="px-6 py-4"></th>
+                                <th scope="col" class="px-6 py-4"></th>
                                 <th scope="col" class="px-6 py-4">
                                     <div class="mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
                                         <input onclick="addAllCheckbox()"
@@ -192,18 +195,22 @@
                                 <tr class="border-b bg-neutral-100 dark:border-neutral-500 dark:bg-neutral-700">
                                     <td class="flex whitespace-nowrap px-6 py-4">
 
-                                        <button type="button" data-te-toggle="modal" data-te-target="#exampleModalXl"
-                                            data-te-ripple-init data-te-ripple-color="light" data-te-ripple-init
-                                            data-te-ripple-color="light"
+                                        <button alt="Apri" title="Apri" type="button" data-te-toggle="modal"
+                                            data-te-target="#exampleModalXl" data-te-ripple-init
+                                            data-te-ripple-color="light" data-te-ripple-init data-te-ripple-color="light"
                                             onclick="showData({{ $u->ID }}, '{{ $u->Nome }}', '{{ $u->mail }}', '{{ $u->notes }}')"
-                                            class="bg-primary hover:bg-primary-600 focus:bg-primary-600 active:bg-primary-700 inline-block rounded-full p-2 uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
+                                            class="ico-mex-button bg-primary hover:bg-primary-600 focus:bg-primary-600 active:bg-primary-700 inline-block rounded-full p-2 uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
 
                                             <svg class="h-3 w-3 text-white dark:text-white" aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"
+                                                style="display:none;">
                                                 <path stroke="currentColor" stroke-linecap="round"
                                                     stroke-linejoin="round" stroke-width="2"
-                                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" style="display:none;">
                                             </svg>
+                                            <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+                                                rel="stylesheet">
+                                            <i class="material-icons dp48 ico-mex">chat_bubble</i>
                                         </button>
 
                                         @if ($u->notes)
@@ -214,6 +221,13 @@
                                                     d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z" />
                                             </svg>
                                         @endif
+                                    </td>
+                                    <td>
+                                        <button type="button" class="" onclick="getUser({{ $u->ID }})"
+                                            data-te-toggle="modal" data-te-target="#userViewModal" data-te-ripple-init
+                                            data-te-ripple-color="light">
+                                            <img src="/img/icon_edit_user.png" class="icon-user" alt=" Utente">
+                                        </button>
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4">
                                         <div class="mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
@@ -255,6 +269,32 @@
 
             }
 
+        }
+
+        function getUser(id) {
+
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var responseData = xhr.responseText;
+                        var userData = JSON.parse(responseData);
+                        document.getElementById('name-user').innerHTML = userData.Nome;
+                        document.getElementById('group-user').innerHTML = userData.Gruppo;
+                        document.getElementById('email-user').innerHTML = userData.mail;
+                    } else {
+                        // Handle errors if necessary
+                    }
+                }
+            };
+
+            // Accessing the route URL from the data attribute
+            var routeUrl = '{{ route('get.user') }}';
+
+            // Concatenate the route URL with the ID parameter
+            xhr.open('GET', routeUrl + `?id=${id}`, true);
+            xhr.send();
         }
     </script>
 

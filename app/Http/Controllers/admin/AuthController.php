@@ -98,7 +98,7 @@ class AuthController extends Controller
         }
 
         // Authentication failed
-        return redirect()->route('login')->with('error', 'Invalid login credentials');
+        return redirect()->route('login')->with('error', 'Username e/o password non corretti');
 
 
     }
@@ -173,16 +173,30 @@ class AuthController extends Controller
             'created_at' => now(),
            
         ]);
-
+        // $name = "ANWAR HOSSAIN";
+        // $email = "anwar.hossain.suman@gmail.com";
+        // $title = "Email Using Mondoweb Server";
+        // $content ="Hi Anwar, is everything okay???";
+    
+   
+        
+    
         if ($user) {
    
-            Mail::raw('Code: ' . $code, function (Message $message) use($user) {
-                $message->to($user->mail)->from(env('MAIL_FROM_NAME'));
+            // Mail::raw('Codice da utilizzare per il recupero della password: ' . $code, function (Message $message) use($user) {
+            //     $message->to($user->mail)->from('prova@mondoweb.it', 'CRM-DSR')->subject('Codice per reimpostare la password');
+            // });
+            $send = Mail::mailer('smtp')->send([], [], function ($message) use($code,$user) {
+                $message
+                    ->to($user->mail)
+                    ->from('prova@mondoweb.it', 'Server crm-dsr')
+                    ->subject( 'Codice per reimpostare la password' )
+                    ->setBody('Codice da utilizzare per il recupero della password: ' . $code, 'text/html');
             });
-        
-            return redirect()->route('password.forgot.change', $user->ID)->with('success', 'Please check your email and input the code');
+            
+            return redirect()->route('password.forgot.change', $user->ID)->with('success', 'Controlla la tua email. Contiene il codice per reimpostare la password');
         }else {
-            return redirect()->back()->with('error', 'User Not Found , Please use correct credentials!');
+            return redirect()->back()->with('error', 'Utente non esistente, prova a reinserire le credenziali di accesso');
 
         }
     }

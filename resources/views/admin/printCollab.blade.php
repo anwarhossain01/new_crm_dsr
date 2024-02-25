@@ -9,13 +9,13 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/tw-elements.min.css" />
         <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="icon" href="{{ asset('public/logo.jpg') }}" type="image/icon type">
+        <link rel="icon" href="{{ asset('public/logo.png') }}" type="image/icon type">
     </head>
 
     <body class="bg-slate-100">
         <div class="p-2">
             <!-- TW Elements is free under AGPL, with commercial license required for specific uses. See more details: https://tw-elements.com/license/ and contact us for queries at tailwind@mdbootstrap.com -->
-            <img src="{{ asset('public/logo.jpg') }}"
+            <img src="{{ asset('public/logo.png') }}"
                 class="h-auto max-w-sm rounded-lg shadow-none transition-shadow duration-300 ease-in-out hover:shadow-lg hover:shadow-black/30"
                 alt="" />
         </div>

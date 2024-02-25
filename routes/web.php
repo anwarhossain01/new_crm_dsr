@@ -17,7 +17,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+// Route::get('/clear-cache', function () {
+//     $exitCode = Artisan::call('cache:clear'); 
+//     return $exitCode.'DONE'; //Return anything
+// });
+Route::get('/clear', function () { 
+    $exitCode = Artisan::call('cache:clear');
+    return $exitCode.'DONE'; //Return anything
+});
+// Route::get('/test-mail', function () {
+//     try {
+//         $send = \Illuminate\Support\Facades\Mail::mailer('sendmail')->send([], [], function ($message)  {
+//             $message
+//                 ->to('anwar.hossain.suman@gmail.com')
+//                 ->from('prova@mondoweb.it', 'Test')
+//                 ->subject( 'My Subject' )
+//                 ->setBody('Test Content', 'text/html');
+//         });
+//         dd($send);
+//     } catch (\Exception $e )  {
+//         throw new \Exception( $e->getMessage() );
+//     }
+// });
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/login', [AuthController::class, 'login'])->name('login');
@@ -65,7 +86,7 @@ Route::get('/search/index', [AdminController::class, 'IndexSearch'])->name('inde
 Route::get('/search/collab', [UserController::class, 'CollabSearch'])->name('collab.search')->middleware('auth');
 Route::get('search/collab/admin', [AdminController::class, 'collabSearchAdmin'])->name('collab.search.admin')->middleware('auth');
 Route::get('/search/advance', [AdminController::class, 'AdvanceSearch'])->name('search.advance')->middleware('auth');
-Route::post('/search/advance/submit', [AdminController::class, 'AdvanceSearchSubmit'])->name('search.advance.submit')->middleware('auth');
+Route::get('/search/advance/submit', [AdminController::class, 'AdvanceSearchSubmit'])->name('search.advance.submit')->middleware('auth');
 
 //password
 Route::get('/password/change/{uid}', [AdminController::class, 'PasswordChange'])->name('password.change');
@@ -82,4 +103,7 @@ Route::post('/import/submit' , [ExportController::class, 'ImportDocumentSubmit']
 Route::post('export/select', [ExportController::class, 'ChooseExport'])->name('export.choose')->middleware('auth');
 Route::post('export/select/submit', [ExportController::class, 'ChooseExportSubmit'])->name('export.choose.submit')->middleware('auth');
 
-
+// ajax routes
+Route::get('search/azenda/', [AdminController::class, 'searchMatchingAzenda'])->name('search.azenda');
+Route::get('search/brand/', [AdminController::class, 'searchMatchingBrand'])->name('search.brand');
+Route::get('get/user/', [AdminController::class, 'getUser'])->name('get.user');

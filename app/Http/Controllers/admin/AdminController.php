@@ -169,7 +169,7 @@ class AdminController extends Controller
         $info->Tel_Uf = $request->Telefono_uff;
         $info->Cell = $request->Cellulare;
         $info->Mail = $request->Mail;
-        $info->Birth = Carbon::createFromFormat('d/m/Y, h:i A', $request->Birth)->format('Y-m-d H:i:s');
+        $info->Birth = $request->Birth == null ? null :Carbon::createFromFormat('d/m/Y, h:i A', $request->Birth)->format('Y-m-d H:i:s');
         $info->Part_Ev = $request->part_ev;
         $info->Note_Az = $request->Note_Az;
         $info->Note_Ref = $request->Note_Ref;
@@ -192,6 +192,7 @@ class AdminController extends Controller
 
     public function InfoEditSubmit(Request $request)
     {
+       
         $info = Information::find($request->id);
         $info->richiedente = $request->richiedente ?? $info->richiedente;
         $info->Agente_ID = $request->assegnato ?? $info->Agente_ID;
@@ -209,7 +210,7 @@ class AdminController extends Controller
         $info->Tel_Uf = $request->Telefono_uff;
         $info->Cell = $request->Cellulare;
         $info->Mail = $request->Mail;
-        $info->Birth = $request->Birth;
+        $info->Birth = $request->Birth == null ? null : Carbon::createFromFormat('d/m/Y', $request->Birth)->format('Y-m-d')." 00:00:00";
         $info->Part_Ev = $request->part_ev;
         $info->Note_Az = $request->Note_Az;
         $info->Note_Ref = $request->Note_Ref;
@@ -605,5 +606,13 @@ class AdminController extends Controller
         }
 
         return view('admin.dashboard', compact('user', 'information'));
+    }
+
+
+    public function getUser(Request $request){
+        $userID = $request->query('id');
+        $user = User::find($userID);
+
+        return response()->json($user);
     }
 }
