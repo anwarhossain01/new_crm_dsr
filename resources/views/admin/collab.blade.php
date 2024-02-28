@@ -258,9 +258,7 @@
 
     <script>
         function showData(id, nome, mail, notes) {
-            document.getElementById('user_id').value = id;
-            document.getElementById('nome').innerHTML = nome;
-            document.getElementById('mail').innerHTML = mail;
+
 
             if (notes) {
                 document.getElementById('exampleFormControlTextarea1').value = notes;
@@ -280,9 +278,11 @@
                     if (xhr.status === 200) {
                         var responseData = xhr.responseText;
                         var userData = JSON.parse(responseData);
-                        document.getElementById('name-user').innerHTML = userData.Nome;
-                        document.getElementById('group-user').innerHTML = userData.Gruppo;
-                        document.getElementById('email-user').innerHTML = userData.mail;
+                        console.log(userData);
+                        document.getElementById('name-user').value = userData.Nome;
+                        document.getElementById('email-user').value = userData.mail;
+                        document.getElementById('id-user1').value = userData.ID;
+                        document.getElementById('id-user2').value = userData.ID;
                     } else {
                         // Handle errors if necessary
                     }

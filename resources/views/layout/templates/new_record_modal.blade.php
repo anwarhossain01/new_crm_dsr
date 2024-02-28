@@ -34,7 +34,7 @@
                 @endphp
 
 
-                <form action="{{ route('new.info') }}" method="post">
+                <form onsubmit="checkSubmission(event)" action="{{ route('new.info') }}" method="post">
                     @csrf
                     <div class="flex flex-wrap justify-center">
                         <div class="ml-0 lg:mr-8">
@@ -385,7 +385,7 @@
                     data-te-modal-dismiss data-te-ripple-init data-te-ripple-color="light">
                     Indietro
                 </button>
-                <button type="submit"
+                <button type="submit" 
                     class="bg-primary hover:bg-primary-600 focus:bg-primary-600 active:bg-primary-700 ml-1 inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                     data-te-ripple-init data-te-ripple-color="light">
                     Salva
@@ -398,6 +398,8 @@
 
 
 <script>
+    var matchingFound = false;
+
     function checkForMatchingAzenda(input) {
         // create a new XMLHttpRequest
         var xhr = new XMLHttpRequest();
@@ -411,8 +413,11 @@
 
                 if (responseData.success == true) {
                     errorTxt.classList.remove('hidden');
+                    matchingFound = true;
                     alert('Questa azienda esiste già.');
+                    return;
                 }
+                matchingFound = false;
             }
         };
 
@@ -434,8 +439,11 @@
                 var responseData = JSON.parse(xhr.responseText);
                 if (responseData.success == true) {
                     errorTxt.classList.remove('hidden');
+                    matchingFound = true;
                     alert('Questo brand/prodotto esiste già.');
+                    return;
                 }
+                matchingFound = false;
             }
         };
 
@@ -444,4 +452,14 @@
 
         xhr.send();
     }
+
+    function checkSubmission(event) {
+            // Your matching logic here
+
+            if (matchingFound) {
+                // Prevent form submission
+                event.preventDefault();
+                alert("Matching value found. Form submission prevented.");
+            }
+        }
 </script>

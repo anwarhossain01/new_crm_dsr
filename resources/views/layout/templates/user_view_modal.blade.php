@@ -26,24 +26,50 @@
 
             <!--Modal body-->
             <div class="relative p-4">
-                <div class="grid grid-cols-3 gap-4">
-                    <div> 
-                        <h4 class="font-bold">Nome</h4>
-                        <p id="name-user"></p>
-                    </div>
-    
-                    <div> 
-                        <h4 class="font-bold">Email</h4>
-                        <p id="email-user"></p>
-                    </div>
+                <form action="{{ route('update.user') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="id" id="id-user1">
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <h4 class="font-bold">Nome</h4>
+                            <input
+                                class="rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                                id="name-user" name="nome" type="text">
+                        </div>
 
-                    <div> 
-                        <h4 class="font-bold">Gruppo</h4>
-                        <p id="group-user"></p>
+                        <div>
+                            <h4 class="font-bold">Email</h4>
+                            <input
+                                class="rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                                id="email-user" name="mail" type="text">
+                        </div>
+
+
+                        <button type="submit"
+                            class="bg-primary hover:bg-primary-600 focus:bg-primary-600 active:bg-primary-700 inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
+                            Update
+                        </button>
+
                     </div>
-                    
-                  </div>
-                
+                </form>
+                <hr class="mt-4">
+                <form action="{{ route('update.user.password') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="id" id="id-user2">
+                    <div class="mt-4 justify-center">
+
+                        <span>
+                            <label for="">New Password</label>
+                            <input
+                                class="rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                                type="password" name="password" id="">
+                        </span>
+                        <button type="submit"
+                            class="bg-primary hover:bg-primary-600 focus:bg-primary-600 active:bg-primary-700 inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
+                            Update
+                        </button>
+                    </div>
+                </form>
 
 
             </div>

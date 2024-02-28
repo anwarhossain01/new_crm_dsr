@@ -107,3 +107,5 @@ Route::post('export/select/submit', [ExportController::class, 'ChooseExportSubmi
 Route::get('search/azenda/', [AdminController::class, 'searchMatchingAzenda'])->name('search.azenda');
 Route::get('search/brand/', [AdminController::class, 'searchMatchingBrand'])->name('search.brand');
 Route::get('get/user/', [AdminController::class, 'getUser'])->name('get.user');
+Route::post('update/user/', [AdminController::class, 'updateUser'])->name('update.user');
+Route::post('update/user/password', [AdminController::class, 'updateUserPassword'])->name('update.user.password');

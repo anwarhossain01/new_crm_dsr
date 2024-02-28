@@ -615,4 +615,62 @@ class AdminController extends Controller
 
         return response()->json($user);
     }
+
+    public function updateUser(Request $request)
+    {
+      
+        $userID = $request->id;
+        $user = User::find($userID);
+        $user->Nome = $request->nome;
+        $user->mail = $request->mail;
+        $user->save();
+
+        return redirect()
+            ->route('index')
+            ->with('success', 'Saved !');
+    }
+    public function updateUserPassword(Request $request)
+    {
+       
+        $userID = $request->id;
+        $user = User::find($userID);
+        $user->Password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()
+        ->route('index')
+        ->with('success', 'Saved !');
+    }
+
+    public function searchMatchingAzenda(Request $request)
+    {
+        $azenda = $request->query('azienda');
+        $success = false;
+        $information = Information::where('Azienda', '=', $azenda)->get();
+        if (!$information->isEmpty()) {
+            $success = true;
+        }
+
+        return response()->json([
+            'success' => $success,
+        ]);
+    }
+
+    public function searchMatchingBrand(Request $request)
+    {
+        $brand = $request->query('brand');
+
+        $success = false;
+        $information = Information::whereNotNull('Brand')
+            ->where('Brand', '=', $brand)
+            ->get();
+
+        if (!$information->isEmpty()) {
+            $success = true;
+        }
+
+        return response()->json([
+            'success' => $success,
+        ]);
+    }
 }
