@@ -169,7 +169,7 @@ class AdminController extends Controller
         $info->Tel_Uf = $request->Telefono_uff;
         $info->Cell = $request->Cellulare;
         $info->Mail = $request->Mail;
-        $info->Birth = $request->Birth == null ? null :Carbon::createFromFormat('d/m/Y, h:i A', $request->Birth)->format('Y-m-d H:i:s');
+        $info->Birth = $request->Birth == null ? null : Carbon::createFromFormat('d/m/Y, h:i A', $request->Birth)->format('Y-m-d H:i:s');
         $info->Part_Ev = $request->part_ev;
         $info->Note_Az = $request->Note_Az;
         $info->Note_Ref = $request->Note_Ref;
@@ -192,7 +192,7 @@ class AdminController extends Controller
 
     public function InfoEditSubmit(Request $request)
     {
-       
+
         $info = Information::find($request->id);
         $info->richiedente = $request->richiedente ?? $info->richiedente;
         $info->Agente_ID = $request->assegnato ?? $info->Agente_ID;
@@ -210,7 +210,7 @@ class AdminController extends Controller
         $info->Tel_Uf = $request->Telefono_uff;
         $info->Cell = $request->Cellulare;
         $info->Mail = $request->Mail;
-        $info->Birth = $request->Birth == null ? null : Carbon::createFromFormat('d/m/Y', $request->Birth)->format('Y-m-d')." 00:00:00";
+        $info->Birth = $request->Birth == null ? null : Carbon::createFromFormat('d/m/Y', $request->Birth)->format('Y-m-d') . " 00:00:00";
         $info->Part_Ev = $request->part_ev;
         $info->Note_Az = $request->Note_Az;
         $info->Note_Ref = $request->Note_Ref;
@@ -291,6 +291,25 @@ class AdminController extends Controller
     {
         $query = Information::query();
 
+        if ($request->data_modifica) {
+            $carbonDatetime = Carbon::createFromFormat('d/m/Y, h:i A', $request->data_modifica);
+            $formattedDatetime = $carbonDatetime->format('Y-m-d H:i:s');
+            if ($request->has("not_data_modifica")) {
+                $this->applyNotFilter($query, $request->data_modifica_selection, 'datamodif', $formattedDatetime);
+            } else {
+                $this->applyFilter($query, $request->data_modifica_selection, 'datamodif', $formattedDatetime);
+            }
+        }
+
+        if ($request->data_creazione) {
+            $carbonDatetime = Carbon::createFromFormat('d/m/Y, h:i A', $request->data_creazione);
+            $formattedDatetime = $carbonDatetime->format('Y-m-d H:i:s');
+            if ($request->has("not_data_creazione")) {
+                $this->applyNotFilter($query, $request->data_creazione_selection, 'Data_Creaz', $formattedDatetime);
+            } else {
+                $this->applyFilter($query, $request->data_creazione_selection, 'Data_Creaz', $formattedDatetime);
+            }
+        }
         // director note option
         $selection = $request->note_direttore_selection;
         if ($request->has('not_note_direttore') && $request->Note_Direttore) {
@@ -312,9 +331,9 @@ class AdminController extends Controller
         $selection = $request->id_selection;
         if ($request->has('not_id') && $request->ID) {
             // Include additional conditions inside this closure
-            $this->applyNotFilter($query, $selection, 'Agente_ID', $request->ID);
+            $this->applyNotFilter($query, $selection, 'ID', $request->ID);
         } elseif ($request->ID) {
-            $this->applyFilter($query, $selection, 'Agente_ID', $request->ID);
+            $this->applyFilter($query, $selection, 'ID', $request->ID);
         }
 
         // agent richiedente
@@ -322,13 +341,29 @@ class AdminController extends Controller
         $ric_user = null;
         if ($request->agente_richiedente_selection_user) {
             $ric_user = User::find($request->agente_richiedente_selection_user)->Nome;
+           
         }
         if ($request->has('not_agente_richiedente') && $ric_user) {
             // Include additional conditions inside this closure
             $this->applyNotFilter($query, $selection, 'richiedente', $ric_user);
         } elseif ($ric_user) {
             $this->applyFilter($query, $selection, 'richiedente', $ric_user);
+
         }
+
+          // agent assegnato
+          $selection = $request->agente_assegnato_selection_1;
+          $ric_user = null;
+          if ($request->agente_assegnato_selection_user) {
+              $ric_user = User::find($request->agente_assegnato_selection_user)->ID;
+          }
+          if ($request->has('not_agente_assegnato') && $ric_user) {
+              // Include additional conditions inside this closure
+              $this->applyNotFilter($query, $selection, 'Agente_ID', $ric_user);
+          } elseif ($ric_user) {
+              $this->applyFilter($query, $selection, 'Agente_ID', $ric_user);
+  
+          }
 
         // top client option
         $selection = $request->tipologia_cliente_selection_1;
@@ -406,9 +441,18 @@ class AdminController extends Controller
         $selection = $request->telefono_selection;
         if ($request->has('not_telefono') && $request->Telefono) {
             // Include additional conditions inside this closure
-            $this->applyNotFilter($query, $selection, 'Cell', $request->Telefono);
+            $this->applyNotFilter($query, $selection, 'Telefono', $request->Telefono);
         } elseif ($request->Telefono) {
-            $this->applyFilter($query, $selection, 'Cell', $request->Telefono);
+            $this->applyFilter($query, $selection, 'Telefono', $request->Telefono);
+        }
+
+        // celeluare options
+        $selection = $request->cellulare_selection;
+        if ($request->has('not_cellulare') && $request->cellulare) {
+            // Include additional conditions inside this closure
+            $this->applyNotFilter($query, $selection, 'Cell', $request->cellulare);
+        } elseif ($request->cellulare) {
+            $this->applyFilter($query, $selection, 'Cell', $request->cellulare);
         }
 
         // part time options
@@ -609,7 +653,8 @@ class AdminController extends Controller
     }
 
 
-    public function getUser(Request $request){
+    public function getUser(Request $request)
+    {
         $userID = $request->query('id');
         $user = User::find($userID);
 
@@ -618,7 +663,7 @@ class AdminController extends Controller
 
     public function updateUser(Request $request)
     {
-      
+
         $userID = $request->id;
         $user = User::find($userID);
         $user->Nome = $request->nome;
@@ -631,15 +676,15 @@ class AdminController extends Controller
     }
     public function updateUserPassword(Request $request)
     {
-       
+
         $userID = $request->id;
         $user = User::find($userID);
         $user->Password = Hash::make($request->password);
         $user->save();
 
         return redirect()
-        ->route('index')
-        ->with('success', 'Saved !');
+            ->route('index')
+            ->with('success', 'Saved !');
     }
 
     public function searchMatchingAzenda(Request $request)
