@@ -180,7 +180,6 @@ class AdminController extends Controller
         $info->Note_Coll = $request->Note_Coll;
         $info->Note_Ev = $request->Note_Ev;
         $info->Notedir = $request->Notedir;
-
         $info->save();
 
         if ($user && auth()->user()->Gruppo !== 'User') {
@@ -193,7 +192,6 @@ class AdminController extends Controller
                     ->setBody("Il cliente" . $request->Brand . "è stato assegnato a" . $request->assegnato, 'text/html');
             });
         }
-
 
         return redirect()
             ->route('index')
