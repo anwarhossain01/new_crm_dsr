@@ -154,6 +154,22 @@ body {
 	-webkit-box-shadow: 5px 5px 7px -3px rgba(0,0,0,0.29); 
 	box-shadow: 5px 5px 7px -3px rgba(0,0,0,0.29);	
 }
+.input-search {
+	background-color:#fff;
+	padding:8px;
+  border-radius:5px;
+  border:1px solid #D4D4D4;
+  margin:8px 0;
+}
+.input-select {
+	background-color:#fff;
+	padding:8px;
+  border-radius:5px;
+  border:1px solid #D4D4D4;
+  margin:8px 0;
+}
+.input-data {background-color:#fff;}
+.input-radio {margin-right:5px;}
 .bg-primary {
 	box-shadow:inset 0px 1px 0px 0px #54a3f7;
 	background:linear-gradient(to bottom, #007dc1 5%, #0061a7 100%);
@@ -262,6 +278,8 @@ body {
 .py-8 {background:#fff;}
 .ricerca-avanzata-tit {
 	width:100%;
+	max-width:90%;
+	margin:0 auto;
 	background-color:#3B82F6;
 	border-radius:10px 10px 0 0;
   padding:6px 10px;
@@ -322,7 +340,9 @@ body {
 .p-4 table {
 	-webkit-box-shadow:2px 5px 6px 2px rgba(0,0,0,0.36) !important;
 	box-shadow:2px 5px 6px 2px rgba(0,0,0,0.36) !important;
-	opacity:0.8;
+	background-image: url('/img/sfondo-popup.jpg');
+	background-repeat:no-repeat;
+  background-size:auto;
 }
 .border-b {border-bottom:1px solid #80B7DD;}
 .flex-no-wrap {
@@ -374,6 +394,12 @@ body {
   bottom:30px;
   position:relative;
 }
+.sortingby {
+	padding:5px 10px;
+	background-color:#fff;
+	border-radius:5px;
+	border:1px solid #D4D4D4;
+}
 /* RESPONSIVE */
 @media (min-width:641px) {
 .nrecord {right:25px; position:absolute !important;}
@@ -394,6 +420,7 @@ nav {border-radius:10px; /*background-color:#fff !important;*/}
   padding-right: 0.5rem !important;
 }
 .flex-col {max-width:99%;}
+.icon_edit_user {position:relative; right:60px; top:10px;}
 }
 @media (max-width:1023px) {
 .logocrmdsr {display:none;}

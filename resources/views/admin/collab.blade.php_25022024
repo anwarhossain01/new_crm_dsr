@@ -1,8 +1,6 @@
 @extends('layout.master')
 
 @section('content')
-    <!--User modal-->
-    @include('layout.templates.user_view_modal')
     <!--Extra large modal-->
     <div data-te-modal-init
         class="fixed left-0 top-0 z-[1055] hidden h-full w-full overflow-y-auto overflow-x-hidden outline-none"
@@ -174,7 +172,6 @@
                         <thead class="border-b bg-white font-medium dark:border-neutral-500 dark:bg-neutral-600">
                             <tr>
                                 <th scope="col" class="px-6 py-4"></th>
-                                <th scope="col" class="px-6 py-4"></th>
                                 <th scope="col" class="px-6 py-4">
                                     <div class="mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
                                         <input onclick="addAllCheckbox()"
@@ -195,21 +192,19 @@
                                 <tr class="border-b bg-neutral-100 dark:border-neutral-500 dark:bg-neutral-700">
                                     <td class="flex whitespace-nowrap px-6 py-4">
 
-                                        <button alt="Apri" title="Apri" type="button" data-te-toggle="modal"
-                                            data-te-target="#exampleModalXl" data-te-ripple-init
-                                            data-te-ripple-color="light" data-te-ripple-init data-te-ripple-color="light"
+                                        <button alt="Apri" title="Apri" type="button" data-te-toggle="modal" data-te-target="#exampleModalXl"
+                                            data-te-ripple-init data-te-ripple-color="light" data-te-ripple-init
+                                            data-te-ripple-color="light"
                                             onclick="showData({{ $u->ID }}, '{{ $u->Nome }}', '{{ $u->mail }}', '{{ $u->notes }}')"
                                             class="ico-mex-button bg-primary hover:bg-primary-600 focus:bg-primary-600 active:bg-primary-700 inline-block rounded-full p-2 uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
 
                                             <svg class="h-3 w-3 text-white dark:text-white" aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"
-                                                style="display:none;">
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" style="display:none;">
                                                 <path stroke="currentColor" stroke-linecap="round"
                                                     stroke-linejoin="round" stroke-width="2"
                                                     d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" style="display:none;">
                                             </svg>
-                                            <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-                                                rel="stylesheet">
+                                            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
                                             <i class="material-icons dp48 ico-mex">chat_bubble</i>
                                         </button>
 
@@ -221,13 +216,6 @@
                                                     d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z" />
                                             </svg>
                                         @endif
-                                    </td>
-                                    <td>
-                                        <button type="button" class="icon_edit_user" onclick="getUser({{ $u->ID }})"
-                                            data-te-toggle="modal" data-te-target="#userViewModal" data-te-ripple-init
-                                            data-te-ripple-color="light">
-                                            <img src="/img/icon_edit_user.png" class="icon-user" alt=" Utente">
-                                        </button>
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4">
                                         <div class="mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
@@ -258,7 +246,9 @@
 
     <script>
         function showData(id, nome, mail, notes) {
-
+            document.getElementById('user_id').value = id;
+            document.getElementById('nome').innerHTML = nome;
+            document.getElementById('mail').innerHTML = mail;
 
             if (notes) {
                 document.getElementById('exampleFormControlTextarea1').value = notes;
@@ -267,34 +257,6 @@
 
             }
 
-        }
-
-        function getUser(id) {
-
-
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        var responseData = xhr.responseText;
-                        var userData = JSON.parse(responseData);
-                        console.log(userData);
-                        document.getElementById('name-user').value = userData.Nome;
-                        document.getElementById('email-user').value = userData.mail;
-                        document.getElementById('id-user1').value = userData.ID;
-                        document.getElementById('id-user2').value = userData.ID;
-                    } else {
-                        // Handle errors if necessary
-                    }
-                }
-            };
-
-            // Accessing the route URL from the data attribute
-            var routeUrl = '{{ route('get.user') }}';
-
-            // Concatenate the route URL with the ID parameter
-            xhr.open('GET', routeUrl + `?id=${id}`, true);
-            xhr.send();
         }
     </script>
 

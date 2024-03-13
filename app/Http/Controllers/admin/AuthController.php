@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-
 class AuthController extends Controller
 {
 
@@ -63,7 +62,42 @@ class AuthController extends Controller
             ]);
             return view('admin.dashboard', compact('user', 'information'));
         } elseif ($user->Gruppo == 'User') {
-            $information = Information::where('Agente_ID', $user->ID)->paginate(10);
+           
+            if(isset($_REQUEST['sort']))
+            {
+
+                if($_REQUEST['sort']=='data_modifica_asc')
+                {
+                    $information = Information::where('Agente_ID', $user->ID)->orderBy('datamodif', 'asc')->paginate(100);
+
+                }
+                
+                elseif($_REQUEST['sort']=='data_modifica_desc')
+                {
+                    $information = Information::where('Agente_ID', $user->ID)->orderBy('datamodif', 'desc')->paginate(100);
+
+                }
+
+                elseif($_REQUEST['sort']=='creazione_asc')
+                {
+                    $information = Information::where('Agente_ID', $user->ID)->orderBy('Data_Creaz', 'asc')->paginate(100);
+
+                }
+                elseif($_REQUEST['sort']=='creazione_desc')
+                {
+                    $information = Information::where('Agente_ID', $user->ID)->orderBy('Data_Creaz', 'desc')->paginate(100);
+
+                }
+                else{
+                    $information = Information::where('Agente_ID', $user->ID)->paginate(100);
+
+                }
+            }
+            else
+            {
+                $information = Information::where('Agente_ID', $user->ID)->paginate(100);
+
+            }
             return view('agent.dashboard', compact('user', 'information'));
         }
 
@@ -201,4 +235,11 @@ class AuthController extends Controller
         }
     }
 
+    public function check_email_unique(Request $req)
+    {
+
+        $count = User::where('mail', $req->email)->count();
+        return response()->json(['status'=>$count==0?true:false]);
+
+    }
 }

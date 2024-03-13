@@ -231,7 +231,7 @@
     </div>
 </div>
 <br>
-{{ $information->links() }}
+{{ $information->appends(['search' => request()->input('search')])->links() }}
 
 
 <script>

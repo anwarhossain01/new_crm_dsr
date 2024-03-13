@@ -28,7 +28,7 @@ class InformationExport implements FromQuery, WithHeadings
             'Data Creazione',
             'Topology',
             'Azienda',
-            'Brand/Prodotto',
+            'Brand',
             'Agente',
             'Indirizzo',
             'Citta',

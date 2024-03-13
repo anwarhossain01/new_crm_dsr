@@ -47,7 +47,6 @@ Route::post('/login/submit', [AuthController::class, 'loginSubmit'])->name('logi
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/register/submit', [AuthController::class, 'registerSubmit'])->name('register.submit');
 
-Route::post('/check_email_unique', [AuthController::class, 'check_email_unique'])->name('check_email_unique');
 
 Route::get('/', [AuthController::class, 'index'])->name('index')->middleware('auth');
 
@@ -107,6 +106,3 @@ Route::post('export/select/submit', [ExportController::class, 'ChooseExportSubmi
 // ajax routes
 Route::get('search/azenda/', [AdminController::class, 'searchMatchingAzenda'])->name('search.azenda');
 Route::get('search/brand/', [AdminController::class, 'searchMatchingBrand'])->name('search.brand');
-Route::get('get/user/', [AdminController::class, 'getUser'])->name('get.user');
-Route::post('update/user/', [AdminController::class, 'updateUser'])->name('update.user');
-Route::post('update/user/password', [AdminController::class, 'updateUserPassword'])->name('update.user.password');
