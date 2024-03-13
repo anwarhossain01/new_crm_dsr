@@ -207,19 +207,10 @@ class AuthController extends Controller
             'created_at' => now(),
            
         ]);
-        // $name = "ANWAR HOSSAIN";
-        // $email = "anwar.hossain.suman@gmail.com";
-        // $title = "Email Using Mondoweb Server";
-        // $content ="Hi Anwar, is everything okay???";
-    
-   
-        
+
     
         if ($user) {
    
-            // Mail::raw('Codice da utilizzare per il recupero della password: ' . $code, function (Message $message) use($user) {
-            //     $message->to($user->mail)->from('prova@mondoweb.it', 'CRM-DSR')->subject('Codice per reimpostare la password');
-            // });
             $send = Mail::mailer('smtp')->send([], [], function ($message) use($code,$user) {
                 $message
                     ->to($user->mail)

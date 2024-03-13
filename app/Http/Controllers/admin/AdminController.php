@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller
 {
@@ -77,7 +78,7 @@ class AdminController extends Controller
 
     public function IndexPagination($pg)
     {
-        
+
         $user = Auth::user();
         $information = Information::paginate($pg);
         return view('admin.dashboard', compact('user', 'information'));
@@ -148,11 +149,13 @@ class AdminController extends Controller
     public function NewInfo(Request $request)
     {
         $info = new Information();
+        $user = null;
         $info->richiedente = $request->richiedente;
         if (auth()->user()->Gruppo === 'User') {
             $info->Agente_ID = auth()->user()->ID;
         } else {
             $info->Agente_ID = $request->assegnato;
+            $user = User::find($request->assegnato);
         }
         $info->Agente = $request->Stato;
         $info->Data_Creaz = $request->create_date == null ? date('Y-m-d H:i:s') : $request->create_date;
@@ -179,6 +182,18 @@ class AdminController extends Controller
         $info->Notedir = $request->Notedir;
 
         $info->save();
+
+        if ($user && auth()->user()->Gruppo !== 'User') {
+
+            $send = Mail::mailer('smtp')->send([], [], function ($message) use ($request, $user) {
+                $message
+                    ->to($user->mail)
+                    ->from('prova@mondoweb.it', 'Server crm-dsr')
+                    ->subject('assegnare completo')
+                    ->setBody("Il cliente" . $request->Brand . "è stato assegnato a" . $request->assegnato, 'text/html');
+            });
+        }
+
 
         return redirect()
             ->route('index')
@@ -218,7 +233,7 @@ class AdminController extends Controller
         $info->Note_Coll = $request->Note_Coll;
         $info->Note_Ev = $request->Note_Ev;
         $info->Notedir = $request->Notedir;
-
+        $info->datamodif = date('Y-m-d H:i:s');
         $info->save();
 
         return redirect()
@@ -342,7 +357,7 @@ class AdminController extends Controller
         $ric_user = null;
         if ($request->agente_richiedente_selection_user) {
             $ric_user = User::find($request->agente_richiedente_selection_user)->Nome;
-           
+
         }
         if ($request->has('not_agente_richiedente') && $ric_user) {
             // Include additional conditions inside this closure
@@ -352,19 +367,19 @@ class AdminController extends Controller
 
         }
 
-          // agent assegnato
-          $selection = $request->agente_assegnato_selection_1;
-          $ric_user = null;
-          if ($request->agente_assegnato_selection_user) {
-              $ric_user = User::find($request->agente_assegnato_selection_user)->ID;
-          }
-          if ($request->has('not_agente_assegnato') && $ric_user) {
-              // Include additional conditions inside this closure
-              $this->applyNotFilter($query, $selection, 'Agente_ID', $ric_user);
-          } elseif ($ric_user) {
-              $this->applyFilter($query, $selection, 'Agente_ID', $ric_user);
-  
-          }
+        // agent assegnato
+        $selection = $request->agente_assegnato_selection_1;
+        $ric_user = null;
+        if ($request->agente_assegnato_selection_user) {
+            $ric_user = User::find($request->agente_assegnato_selection_user)->ID;
+        }
+        if ($request->has('not_agente_assegnato') && $ric_user) {
+            // Include additional conditions inside this closure
+            $this->applyNotFilter($query, $selection, 'Agente_ID', $ric_user);
+        } elseif ($ric_user) {
+            $this->applyFilter($query, $selection, 'Agente_ID', $ric_user);
+
+        }
 
         // top client option
         $selection = $request->tipologia_cliente_selection_1;
