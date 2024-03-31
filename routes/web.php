@@ -64,10 +64,11 @@ Route::post('/info/delete', [AdminController::class, 'deleteItems'])->name('info
 // collab routes
 Route::get('/collab', [AdminController::class, 'collab'])->name('collab')->middleware('auth');
 Route::post('/collab/msg', [AdminController::class, 'CollabMsg'])->name('collab.msg')->middleware('auth');
+Route::get('/collab/show/', [AdminController::class, 'getCllabAnagrafhia'])->name('collab.show')->middleware('auth');
 
-// pagination
-Route::get('/{pg}', [AdminController::class, 'IndexPagination'])->name('index.pg')->middleware('auth');
-Route::get('/collab/{pg}', [AdminController::class, 'CollabPagination'])->name('collab.pg')->middleware('auth');
+// // pagination
+// Route::get('/{pg}', [AdminController::class, 'IndexPagination'])->name('index.pg')->middleware('auth');
+// Route::get('/collab/{pg}', [AdminController::class, 'CollabPagination'])->name('collab.pg')->middleware('auth');
 
 // print page
 Route::post('/print', [AdminController::class, 'PrintPage'])->name('print')->middleware('auth');
