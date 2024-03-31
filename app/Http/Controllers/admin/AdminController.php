@@ -11,300 +11,269 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use GuzzleHttp\Client;
 
 class AdminController extends Controller
 {
-    private function applyFilter($query, $filterOption, $fieldName, $filterValue)
-    {
-        switch ($filterOption) {
-            case 'Contains':
-                $query->where($fieldName, 'like', '%' . $filterValue . '%');
-                break;
-            case 'Equals':
-                $query->where($fieldName, $filterValue);
-                break;
-            case 'Starts_with':
-                $query->where($fieldName, 'like', $filterValue . '%');
-                break;
-            case 'More_than':
-                $query->where($fieldName, '>', $filterValue);
-                break;
-            case 'Less_than':
-                $query->where($fieldName, '<', $filterValue);
-                break;
-            case 'Between':
-                // Assuming $filterValue is an array with two values
-                $query->whereBetween($fieldName, $filterValue);
-                break;
-            case 'Empty':
-                $query->whereNull($fieldName);
-                break;
-        }
-    }
-    private function applyNotFilter($query, $filterOption, $fieldName, $filterValue)
-    {
-        switch ($filterOption) {
-            case 'Contains':
-                $query->where($fieldName, 'not like', '%' . $filterValue . '%');
-                break;
-            case 'Equals':
-                $query->where($fieldName, '!=', $filterValue);
-                break;
-            case 'Starts_with':
-                $query->where($fieldName, 'not like', $filterValue . '%');
-                break;
-            case 'More_than':
-                $query->where($fieldName, '<=', $filterValue);
-                break;
-            case 'Less_than':
-                $query->where($fieldName, '>=', $filterValue);
-                break;
-            case 'Between':
-                // Assuming $filterValue is an array with two values
-                $query->whereNotBetween($fieldName, $filterValue);
-                break;
-            case 'Empty':
-                $query->whereNotNull($fieldName);
-                break;
-        }
-    }
+    private $ANYSEARCH = 'any';
+    private $ALLSEARCH = 'all';
 
-    public function collab()
-    {
-        $user = Auth::user();
-        $users = User::paginate(10);
-        return view('admin.collab', compact('user', 'users'));
-    }
-
-    public function IndexPagination($pg)
-    {
-
-        $user = Auth::user();
-        $information = Information::paginate($pg);
-        return view('admin.dashboard', compact('user', 'information'));
-    }
-    public function CollabPagination($pg)
-    {
-        $user = Auth::user();
-        $users = User::paginate($pg);
-        return view('admin.collab', compact('user', 'users'));
-    }
-
-    public function CollabMsg(Request $request)
-    {
-        $user = User::find($request->user_id);
-        $user->notes = $request->msg ?? null;
-        $user->save();
-
-        return redirect()->back();
-    }
-
-    public function IndexSearch(Request $request)
-    {
-        $searchTerm = $request->input('search');
-
-        $user = Auth::user();
-        $information = Information::where(function ($query) use ($searchTerm) {
-            $query
-                ->where('Agente', $searchTerm)
-                ->orWhere('richiedente', $searchTerm)
-                ->orWhere('Azienda', $searchTerm)
-                ->orWhere('Telefono', 'like', '%' . $searchTerm . '%')
-                ->orWhere('Referente', 'like', '%' . $searchTerm . '%')
-                ->orWhere('Cell', 'like', '%' . $searchTerm . '%')
-                ->orWhere('Tel_Uf', 'like', '%' . $searchTerm . '%')
-                ->orWhere('Mail', 'like', '%' . $searchTerm . '%')
-                ->orWhere('Sito', 'like', '%' . $searchTerm . '%')
-                ->orWhere('Tip_Cliente', 'like', '%' . $searchTerm . '%');
-        })->paginate(10);
-
-        return view('admin.dashboard', compact('information', 'user'));
-    }
-
-    public function PrintPage(Request $request)
-    {
-        $ids = $request->input('ids');
-
-        $information = Information::whereIn('ID', $ids)->get();
-
-        return view('print', compact('information'));
-    }
-
-    public function PrintPageAll()
-    {
-        $information = Information::get();
-
-        return view('print', compact('information'));
-    }
-
-    public function PrintThisPage(Request $request)
-    {
-        $ids = $request->input('ids');
-
-        $information = Information::whereIn('ID', $ids)->get();
-
-        return view('print', compact('information'));
-    }
-
-    public function NewInfo(Request $request)
-    {
-        $info = new Information();
-        $user = null;
-        $info->richiedente = $request->richiedente;
-        if (auth()->user()->Gruppo === 'User') {
-            $info->Agente_ID = auth()->user()->ID;
-        } else {
-            $info->Agente_ID = $request->assegnato;
-            $user = User::find($request->assegnato);
-        }
-        $info->Agente = $request->Stato;
-        $info->Data_Creaz = $request->create_date == null ? date('Y-m-d H:i:s') : $request->create_date;
-        $info->datamodif = date('Y-m-d H:i:s');
-        $info->Tip_Cliente = $request->Tip_Cliente;
-        $info->Azienda = $request->Azienda;
-        $info->Brand = $request->Brand;
-        $info->Indirizzo = $request->Indirizzo;
-        $info->Citta = $request->Citta;
-        $info->cap = $request->Cap;
-        $info->Telefono = $request->Telefono;
-        $info->Sito = $request->Sito;
-        $info->Referente = $request->Referente;
-        $info->Pos_Az = $request->Posizione;
-        $info->Tel_Uf = $request->Telefono_uff;
-        $info->Cell = $request->Cellulare;
-        $info->Mail = $request->Mail;
-        $info->Birth = $request->Birth == null ? null : Carbon::createFromFormat('d/m/Y, h:i A', $request->Birth)->format('Y-m-d H:i:s');
-        $info->Part_Ev = $request->part_ev;
-        $info->Note_Az = $request->Note_Az;
-        $info->Note_Ref = $request->Note_Ref;
-        $info->Note_Coll = $request->Note_Coll;
-        $info->Note_Ev = $request->Note_Ev;
-        $info->Notedir = $request->Notedir;
-        $info->save();
-
-        if ($user && auth()->user()->Gruppo !== 'User') {
-
-            $send = Mail::mailer('smtp')->send([], [], function ($message) use ($request, $user) {
-                $message
-                    ->to($user->mail)
-                    ->from('prova@mondoweb.it', 'Server crm-dsr')
-                    ->subject('assegnare completo')
-                    ->setBody("Il cliente" . $request->Brand . "è stato assegnato a" . $request->assegnato, 'text/html');
-            });
-        }
-
-        return redirect()
-            ->route('index')
-            ->with('success', 'creato con successo!');
-    }
-
-    public function InfoEdit($id)
-    {
-        $information = Information::find($id);
-        return view('editRecord', compact('information'));
-    }
-
-    public function InfoEditSubmit(Request $request)
-    {
-
-        $info = Information::find($request->id);
-        $info->richiedente = $request->richiedente ?? $info->richiedente;
-        $info->Agente_ID = $request->assegnato ?? $info->Agente_ID;
-        $info->Agente = $request->Stato ?? $info->Agente;
-        $info->Tip_Cliente = $request->Tip_Cliente;
-        $info->Azienda = $request->Azienda;
-        $info->Brand = $request->Brand;
-        $info->Indirizzo = $request->Indirizzo;
-        $info->Citta = $request->Citta;
-        $info->cap = $request->Cap;
-        $info->Telefono = $request->Telefono;
-        $info->Sito = $request->Sito;
-        $info->Referente = $request->Referente;
-        $info->Pos_Az = $request->Posizione;
-        $info->Tel_Uf = $request->Telefono_uff;
-        $info->Cell = $request->Cellulare;
-        $info->Mail = $request->Mail;
-        $info->Birth = $request->Birth == null ? null : Carbon::createFromFormat('d/m/Y', $request->Birth)->format('Y-m-d') . " 00:00:00";
-        $info->Part_Ev = $request->part_ev;
-        $info->Note_Az = $request->Note_Az;
-        $info->Note_Ref = $request->Note_Ref;
-        $info->Note_Coll = $request->Note_Coll;
-        $info->Note_Ev = $request->Note_Ev;
-        $info->Notedir = $request->Notedir;
-        $info->datamodif = date('Y-m-d H:i:s');
-        $info->save();
-
-        return redirect()
-            ->route('index')
-            ->with('success', 'Saved !');
-    }
-
-    public function deleteItems(Request $request)
-    {
-        $ids = $request->input('ids');
-
-        $information = Information::whereIn('ID', $ids)->delete();
-
-        return redirect()
-            ->route('index')
-            ->with('success', 'Done !');
-    }
-
-    public function PasswordChange($uid)
-    {
-        return view('passwordChange', compact('uid'));
-    }
-
-    public function PasswordChangeSubmit(Request $request)
-    {
-        $old_password = $request->old_password;
-        $new_password = $request->new_password;
-        $confirm_password = $request->confirm_password;
-        $code = $request->code;
-
-        if ($old_password) {
-            if (!Hash::check($old_password, User::find($request->user_id)->Password)) {
-                return redirect()
-                    ->back()
-                    ->with('error', 'Old password does not match!');
-            }
-        }
-        if ($code) {
-            $pass_reset = Password_Reset::where('token', $code)->first();
-            if (!$pass_reset) {
-                return redirect()
-                    ->back()
-                    ->with('error', 'Code does not match!');
-            }
-
-            // else delete the code
-            $pass_reset->delete();
-        }
-
-        if ($new_password != $confirm_password) {
-            return redirect()
-                ->back()
-                ->with('error', 'New password and confirm password does not match!');
-        }
-
-        $user = User::find($request->user_id);
-        $user->Password = Hash::make($new_password);
-        $user->save();
-
-        return redirect()
-            ->route('index')
-            ->with('success', 'Saved !');
-    }
-
-    public function AdvanceSearch()
-    {
-        return view('searchAdvance');
-    }
-
-    public function AdvanceSearchSubmit(Request $request)
+    private function AllAdvanceSearch($request, $perpage)
     {
         $query = Information::query();
+        $query->where(function ($query) use ($request) {
+            if ($request->data_modifica) {
+                $carbonDatetime = Carbon::createFromFormat('d/m/Y, h:i A', $request->data_modifica);
+                $formattedDatetime = $carbonDatetime->format('Y-m-d H:i:s');
+                if ($request->has("not_data_modifica")) {
+                    $this->applyNotFilter($query, $request->data_modifica_selection, 'datamodif', $formattedDatetime);
+                } else {
+                    $this->applyFilter($query, $request->data_modifica_selection, 'datamodif', $formattedDatetime);
+                }
+            }
 
+            if ($request->data_creazione) {
+                $carbonDatetime = Carbon::createFromFormat('d/m/Y, h:i A', $request->data_creazione);
+                $formattedDatetime = $carbonDatetime->format('Y-m-d H:i:s');
+                if ($request->has("not_data_creazione")) {
+                    $this->applyNotFilter($query, $request->data_creazione_selection, 'Data_Creaz', $formattedDatetime);
+                } else {
+                    $this->applyFilter($query, $request->data_creazione_selection, 'Data_Creaz', $formattedDatetime);
+                }
+            }
+            // director note option
+            $selection = $request->note_direttore_selection;
+            if ($request->has('not_note_direttore') && $request->Note_Direttore) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Notedir', $request->Note_Direttore);
+            } elseif ($request->Note_Direttore) {
+                $this->applyFilter($query, $selection, 'Notedir', $request->Note_Direttore);
+            }
+
+            // state options
+            $selection = $request->stato_scheda_selection;
+            if ($request->has('not_stato_scheda') && $request->Stato_Scheda) {
+                $this->applyNotFilter($query, $selection, 'Agente', $request->Stato_Scheda);
+            } elseif ($request->Stato_Scheda) {
+                $this->applyFilter($query, $selection, 'Agente', $request->Stato_Scheda);
+            }
+
+            // id options
+            $selection = $request->id_selection;
+            if ($request->has('not_id') && $request->ID) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'ID', $request->ID);
+            } elseif ($request->ID) {
+                $this->applyFilter($query, $selection, 'ID', $request->ID);
+            }
+
+            // agent richiedente
+            $selection = $request->agente_richiedente_selection_1;
+            $ric_user = null;
+            if ($request->agente_richiedente_selection_user) {
+                $ric_user = User::find($request->agente_richiedente_selection_user)->Nome;
+            }
+            if ($request->has('not_agente_richiedente') && $ric_user) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'richiedente', $ric_user);
+            } elseif ($ric_user) {
+                $this->applyFilter($query, $selection, 'richiedente', $ric_user);
+            }
+
+            // agent assegnato
+            $selection = $request->agente_assegnato_selection_1;
+            $ric_user = null;
+            if ($request->agente_assegnato_selection_user) {
+                $ric_user = User::find($request->agente_assegnato_selection_user)->ID;
+            }
+            if ($request->has('not_agente_assegnato') && $ric_user) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Agente_ID', $ric_user);
+            } elseif ($ric_user) {
+                $this->applyFilter($query, $selection, 'Agente_ID', $ric_user);
+            }
+
+            // top client option
+            $selection = $request->tipologia_cliente_selection_1;
+            if ($request->has('not_tipologia_cliente') && $request->tipologia_cliente_selection_2) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Tip_Cliente', $request->tipologia_cliente_selection_2);
+            } elseif ($request->tipologia_cliente_selection_2) {
+                $this->applyFilter($query, $selection, 'Tip_Cliente', $request->tipologia_cliente_selection_2);
+            }
+
+            // agenda options
+            $selection = $request->azienda_selection;
+            if ($request->has('not_azienda') && $request->Azienda) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Azienda', $request->Azienda);
+            } elseif ($request->Azienda) {
+                $this->applyFilter($query, $selection, 'Azienda', $request->Azienda);
+            }
+
+            // brand options
+            $selection = $request->brand_selection;
+            if ($request->has('not_brand') && $request->Brand) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Brand', $request->Brand);
+            } elseif ($request->Brand) {
+                $this->applyFilter($query, $selection, 'Brand', $request->Brand);
+            }
+
+            // city options
+            $selection = $request->city_selection;
+            if ($request->has('not_city') && $request->City) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Citta', $request->City);
+            } elseif ($request->City) {
+                $this->applyFilter($query, $selection, 'Citta', $request->City);
+            }
+
+            // cap options
+            $selection = $request->cap_selection;
+            if ($request->has('not_cap') && $request->Cap) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Cap', $request->Cap);
+            } elseif ($request->Cap) {
+                $this->applyFilter($query, $selection, 'Cap', $request->Cap);
+            }
+
+            // indirizzo options
+            $selection = $request->indirizzo_selection;
+            if ($request->has('not_indirizzo') && $request->Indirizzo) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Indirizzo', $request->Indirizzo);
+            } elseif ($request->Indirizzo) {
+                $this->applyFilter($query, $selection, 'Indirizzo', $request->Indirizzo);
+            }
+
+            // refernte options
+            $selection = $request->referente_selection;
+            if ($request->has('not_referente') && $request->Referente) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Referente', $request->Referente);
+            } elseif ($request->Referente) {
+                $this->applyFilter($query, $selection, 'Referente', $request->Referente);
+            }
+
+            // compleanno options
+            $selection = $request->compleanno_selection;
+            $birth_date_formatted = null;
+            if ($request->Compleanno) {
+                $birth_date_formatted = $this->makeDateFormat($request->Compleanno);
+            }
+            if ($request->has('not_compleanno') && $birth_date_formatted) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Birth', $birth_date_formatted);
+            } elseif ($birth_date_formatted) {
+                $this->applyFilter($query, $selection, 'Birth', $birth_date_formatted);
+            }
+
+            // telephone options
+            $selection = $request->telefono_selection;
+            if ($request->has('not_telefono') && $request->Telefono) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Telefono', $request->Telefono);
+            } elseif ($request->Telefono) {
+                $this->applyFilter($query, $selection, 'Telefono', $request->Telefono);
+            }
+
+            // celeluare options
+            $selection = $request->cellulare_selection;
+            if ($request->has('not_cellulare') && $request->cellulare) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Cell', $request->cellulare);
+            } elseif ($request->cellulare) {
+                $this->applyFilter($query, $selection, 'Cell', $request->cellulare);
+            }
+
+            // part time options
+            $selection = $request->part_eventi_selection_1;
+            if ($request->has('not_part_eventi') && $request->part_eventi_selection_2) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Part_Ev', $request->part_eventi_selection_2);
+            } elseif ($request->part_eventi_selection_2) {
+                $this->applyFilter($query, $selection, 'Part_Ev', $request->part_eventi_selection_2);
+            }
+
+            // sito options
+            $selection = $request->sito_selection;
+            if ($request->has('not_sito') && $request->Sito) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Sito', $request->Sito);
+            } elseif ($request->Sito) {
+                $this->applyFilter($query, $selection, 'Sito', $request->Sito);
+            }
+
+            // note azenda
+            $selection = $request->note_azienda_selection;
+            if ($request->has('not_note_azienda') && $request->Note_Azienda) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Note_Az', $request->Note_Azienda);
+            } elseif ($request->Note_Azienda) {
+                $this->applyFilter($query, $selection, 'Note_Az', $request->Note_Azienda);
+            }
+
+            // pos az
+            $selection = $request->posizione_az_selection;
+            if ($request->has('not_posizione_az') && $request->Posizione_Az) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Pos_Az', $request->Posizione_Az);
+            } elseif ($request->Posizione_Az) {
+                $this->applyFilter($query, $selection, 'Pos_Az', $request->Posizione_Az);
+            }
+
+            // tellephone official
+            $selection = $request->tel_uff_selection;
+            if ($request->has('not_tel_uff') && $request->Tel_Uff) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Tel_Uf', $request->Tel_Uff);
+            } elseif ($request->Tel_Uff) {
+                $this->applyFilter($query, $selection, 'Tel_Uf', $request->Tel_Uff);
+            }
+
+            // mail options
+            $selection = $request->mail_selection;
+            if ($request->has('not_mail') && $request->Mail) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Mail', $request->Mail);
+            } elseif ($request->Mail) {
+                $this->applyFilter($query, $selection, 'Mail', $request->Mail);
+            }
+
+            // note reference
+            $selection = $request->note_ref_selection;
+            if ($request->has('not_note_ref') && $request->Note_ref) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Note_Ref', $request->Note_ref);
+            } elseif ($request->Note_ref) {
+                $this->applyFilter($query, $selection, 'Note_Ref', $request->Note_ref);
+            }
+
+            // note collaborator
+            $selection = $request->note_col_selection;
+            if ($request->has('not_note_col') && $request->Note_col) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Note_Coll', $request->Note_col);
+            } elseif ($request->Note_col) {
+                $this->applyFilter($query, $selection, 'Note_Coll', $request->Note_col);
+            }
+
+            // note ev
+            $selection = $request->note_ev_selection;
+            if ($request->has('not_note_ev') && $request->Note_ev) {
+                // Include additional conditions inside this closure
+                $this->applyNotFilter($query, $selection, 'Note_Ev', $request->Note_ev);
+            } elseif ($request->Note_ev) {
+                $this->applyFilter($query, $selection, 'Note_Ev', $request->Note_ev);
+            }
+        });
+
+        return $query->paginate($perpage);
+    }
+    private function AnyAdvanceSearch($request, $perpage)
+    {
+        $query = Information::query();
         if ($request->data_modifica) {
             $carbonDatetime = Carbon::createFromFormat('d/m/Y, h:i A', $request->data_modifica);
             $formattedDatetime = $carbonDatetime->format('Y-m-d H:i:s');
@@ -355,14 +324,12 @@ class AdminController extends Controller
         $ric_user = null;
         if ($request->agente_richiedente_selection_user) {
             $ric_user = User::find($request->agente_richiedente_selection_user)->Nome;
-
         }
         if ($request->has('not_agente_richiedente') && $ric_user) {
             // Include additional conditions inside this closure
             $this->applyNotFilter($query, $selection, 'richiedente', $ric_user);
         } elseif ($ric_user) {
             $this->applyFilter($query, $selection, 'richiedente', $ric_user);
-
         }
 
         // agent assegnato
@@ -376,7 +343,6 @@ class AdminController extends Controller
             $this->applyNotFilter($query, $selection, 'Agente_ID', $ric_user);
         } elseif ($ric_user) {
             $this->applyFilter($query, $selection, 'Agente_ID', $ric_user);
-
         }
 
         // top client option
@@ -444,11 +410,15 @@ class AdminController extends Controller
 
         // compleanno options
         $selection = $request->compleanno_selection;
-        if ($request->has('not_compleanno') && $request->Compleanno) {
+        $birth_date_formatted = null;
+        if ($request->Compleanno) {
+            $birth_date_formatted = $this->makeDateFormat($request->Compleanno);
+        }
+        if ($request->has('not_compleanno') && $birth_date_formatted) {
             // Include additional conditions inside this closure
-            $this->applyNotFilter($query, $selection, 'Birth', $request->Compleanno);
-        } elseif ($request->Compleanno) {
-            $this->applyFilter($query, $selection, 'Birth', $request->Compleanno);
+            $this->applyNotFilter($query, $selection, 'Birth', $birth_date_formatted);
+        } elseif ($birth_date_formatted) {
+            $this->applyFilter($query, $selection, 'Birth', $birth_date_formatted);
         }
 
         // telephone options
@@ -550,19 +520,372 @@ class AdminController extends Controller
             $this->applyFilter($query, $selection, 'Note_Ev', $request->Note_ev);
         }
 
+        return $query->paginate($perpage);
+    }
+
+    private function applyFilter($query, $filterOption, $fieldName, $filterValue)
+    {
+        switch ($filterOption) {
+            case 'Contains':
+                $query->where($fieldName, 'like', '%' . $filterValue . '%');
+                break;
+            case 'Equals':
+                $query->where($fieldName, $filterValue);
+                break;
+            case 'Starts_with':
+                $query->where($fieldName, 'like', $filterValue . '%');
+                break;
+            case 'More_than':
+                $query->where($fieldName, '>', $filterValue);
+                break;
+            case 'Less_than':
+                $query->where($fieldName, '<', $filterValue);
+                break;
+            case 'Between':
+                // Assuming $filterValue is an array with two values
+                $query->whereBetween($fieldName, $filterValue);
+                break;
+            case 'Empty':
+                $query->whereNull($fieldName);
+                break;
+        }
+
+    }
+    private function applyNotFilter($query, $filterOption, $fieldName, $filterValue)
+    {
+        switch ($filterOption) {
+            case 'Contains':
+                $query->where($fieldName, 'not like', '%' . $filterValue . '%');
+                break;
+            case 'Equals':
+                $query->where($fieldName, '!=', $filterValue);
+                break;
+            case 'Starts_with':
+                $query->where($fieldName, 'not like', $filterValue . '%');
+                break;
+            case 'More_than':
+                $query->where($fieldName, '<=', $filterValue);
+                break;
+            case 'Less_than':
+                $query->where($fieldName, '>=', $filterValue);
+                break;
+            case 'Between':
+                // Assuming $filterValue is an array with two values
+                $query->whereNotBetween($fieldName, $filterValue);
+                break;
+            case 'Empty':
+                $query->whereNotNull($fieldName);
+                break;
+        }
+    }
+
+    public function collab(Request $request)
+    {
+        $perpage = $this->pageSelector($request);
         $user = Auth::user();
-        $information = $query->paginate(10);
+        $users = User::paginate($perpage);
+        return view('admin.collab', compact('user', 'users'));
+    }
+
+    public function IndexPagination($pg)
+    {
+
+        $user = Auth::user();
+        $information = Information::paginate($pg);
+        return view('admin.dashboard', compact('user', 'information'));
+    }
+    public function CollabPagination($pg)
+    {
+        $user = Auth::user();
+        $users = User::paginate($pg);
+        return view('admin.collab', compact('user', 'users'));
+    }
+
+    public function CollabMsg(Request $request)
+    {
+        $user = User::find($request->user_id);
+        $user->notes = $request->msg ?? null;
+        $user->save();
+
+        return redirect()->back();
+    }
+
+    public function IndexSearch(Request $request)
+    {
+        $searchTerm = $request->input('search');
+        $perpage = $this->pageSelector($request);
+        $user = Auth::user();
+        $information = Information::where(function ($query) use ($searchTerm) {
+            $query
+                ->where('Agente', $searchTerm)
+                ->orWhere('richiedente', $searchTerm)
+                ->orWhere('Azienda', $searchTerm)
+                ->orWhere('Telefono', 'like', '%' . $searchTerm . '%')
+                ->orWhere('Referente', 'like', '%' . $searchTerm . '%')
+                ->orWhere('Cell', 'like', '%' . $searchTerm . '%')
+                ->orWhere('Tel_Uf', 'like', '%' . $searchTerm . '%')
+                ->orWhere('Mail', 'like', '%' . $searchTerm . '%')
+                ->orWhere('Sito', 'like', '%' . $searchTerm . '%')
+                ->orWhere('Tip_Cliente', 'like', '%' . $searchTerm . '%');
+        })->paginate($perpage);
+
+        return view('admin.dashboard', compact('information', 'user'));
+    }
+
+    public function PrintPage(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        $information = Information::whereIn('ID', $ids)->get();
+
+        return view('print', compact('information'));
+    }
+
+    public function PrintPageAll()
+    {
+        $information = Information::get();
+
+        return view('print', compact('information'));
+    }
+
+    public function PrintThisPage(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        $information = Information::whereIn('ID', $ids)->get();
+
+        return view('print', compact('information'));
+    }
+
+    public function NewInfo(Request $request)
+    {
+        $info = new Information();
+        $user = null;
+        $info->richiedente = $request->richiedente;
+        if (auth()->user()->Gruppo === 'User') {
+            $info->Agente_ID = auth()->user()->ID;
+        } else {
+            $info->Agente_ID = $request->assegnato;
+            $user = User::find($request->assegnato);
+        }
+        $info->Agente = $request->Stato;
+        $info->Data_Creaz = $request->create_date == null ? date('Y-m-d H:i:s') : $request->create_date;
+        $info->datamodif = date('Y-m-d H:i:s');
+        $info->Tip_Cliente = $request->Tip_Cliente;
+        $info->Azienda = $request->Azienda;
+        $info->Brand = $request->Brand;
+        $info->Indirizzo = $request->Indirizzo;
+        $info->Citta = $request->Citta;
+        $info->cap = $request->Cap;
+        $info->Telefono = $request->Telefono;
+        $info->Sito = $request->Sito;
+        $info->Referente = $request->Referente;
+        $info->Pos_Az = $request->Posizione;
+        $info->Tel_Uf = $request->Telefono_uff;
+        $info->Cell = $request->Cellulare;
+        $info->Mail = $request->Mail;
+        //$info->Birth = $request->Birth == null ? null : Carbon::createFromFormat('d/m/Y, h:i A', $request->Birth)->format('Y-m-d H:i:s');
+        $info->Birth = $request->Birth == null ? null : Carbon::createFromFormat('d/m/Y', $request->Birth)->format('Y-m-d');
+
+        $info->Part_Ev = $request->part_ev;
+        $info->Note_Az = $request->Note_Az;
+        $info->Note_Ref = $request->Note_Ref;
+        $info->Note_Coll = $request->Note_Coll;
+        $info->Note_Ev = $request->Note_Ev;
+        $info->Notedir = $request->Notedir;
+
+        $info->save();
+
+        if ($user && auth()->user()->Gruppo !== 'User') {
+
+            // $send = Mail::mailer('smtp')->send([], [], function ($message) use ($request, $user) {
+            //     $message
+            //         ->to($user->mail)
+            //         ->from('prova@mondoweb.it', 'Server crm-dsr')
+            //         ->subject('assegnare completo')
+            //         ->setBody("Il cliente" . $request->Brand . "è stato assegnato a" . $request->assegnato, 'text/html');
+            // });
+
+            // $send_admin = Mail::mailer('smtp')->send([], [], function ($message) use ($request, $user) {
+            //     $message
+            //         ->to('v.staffolani@dimensioneadvertising.it')
+            //         ->from('prova@mondoweb.it', 'Server crm-dsr')
+            //         ->subject('assegnare completo')
+            //         ->setBody("Il cliente" . $request->Brand . "è stato assegnato a" . $request->assegnato, 'text/html');
+            // });
+
+            try {
+                $uri = "http://crm-dsr.mondoweb.it/formtomail/api_send_email.php";
+                $params['headers'] = [];
+                $params['form_params'] = [
+                    'to' => $user->mail,
+                    'type' => 'assign',
+                    'brand' => $request->Brand,
+                    'assegnato' => $request->assegnato
+                ];
+                $client = new Client();
+
+                $response = $client->request('POST', $uri, $params);
+                $data = json_decode($response->getBody()->getContents(), true);
+                if ($data['status'] == 1) {
+                } else {
+                }
+            } catch (\Throwable $th) {
+            }
+        }
+
+
+        return redirect()
+            ->route('index')
+            ->with('success', 'creato con successo!');
+    }
+
+    public function InfoEdit($id)
+    {
+        $information = Information::find($id);
+        return view('editRecord', compact('information'));
+    }
+
+    public function InfoEditSubmit(Request $request)
+    {
+
+        $info = Information::find($request->id);
+        $info->richiedente = $request->richiedente ?? $info->richiedente;
+        $info->Agente_ID = $request->assegnato ?? $info->Agente_ID;
+        $info->Agente = $request->Stato ?? $info->Agente;
+        $info->Tip_Cliente = $request->Tip_Cliente;
+        $info->Azienda = $request->Azienda;
+        $info->Brand = $request->Brand;
+        $info->Indirizzo = $request->Indirizzo;
+        $info->Citta = $request->Citta;
+        $info->cap = $request->Cap;
+        $info->Telefono = $request->Telefono;
+        $info->Sito = $request->Sito;
+        $info->Referente = $request->Referente;
+        $info->Pos_Az = $request->Posizione;
+        $info->Tel_Uf = $request->Telefono_uff;
+        $info->Cell = $request->Cellulare;
+        $info->Mail = $request->Mail;
+        // $info->Birth = $request->Birth == null ? null : Carbon::createFromFormat('d/m/Y', $request->Birth)->format('Y-m-d') . " 00:00:00";
+        $info->Birth = $request->Birth == null ? null : (str_contains($request->Birth, '/') ? Carbon::createFromFormat('d/m/Y', $request->Birth)->format('Y-m-d') : $request->Birth);
+
+        $info->Part_Ev = $request->part_ev;
+        $info->Note_Az = $request->Note_Az;
+        $info->Note_Ref = $request->Note_Ref;
+        $info->Note_Coll = $request->Note_Coll;
+        $info->Note_Ev = $request->Note_Ev;
+        $info->Notedir = $request->Notedir;
+        $info->datamodif = date('Y-m-d H:i:s');
+        $info->save();
+
+        return redirect()
+            ->route('index')
+            ->with('success', 'Saved !');
+    }
+
+    public function deleteItems(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        $information = Information::whereIn('ID', $ids)->delete();
+
+        return redirect()
+            ->route('index')
+            ->with('success', 'Done !');
+    }
+
+    public function PasswordChange($uid)
+    {
+        return view('passwordChange', compact('uid'));
+    }
+
+    public function PasswordChangeSubmit(Request $request)
+    {
+        $old_password = $request->old_password;
+        $new_password = $request->new_password;
+        $confirm_password = $request->confirm_password;
+        $code = $request->code;
+
+        if ($old_password) {
+            if (!Hash::check($old_password, User::find($request->user_id)->Password)) {
+                return redirect()
+                    ->back()
+                    ->with('error', 'Old password does not match!');
+            }
+        }
+        if ($code) {
+            $pass_reset = Password_Reset::where('token', $code)->first();
+            if (!$pass_reset) {
+                return redirect()
+                    ->back()
+                    ->with('error', 'Code does not match!');
+            }
+
+            // else delete the code
+            $pass_reset->delete();
+        }
+
+        if ($new_password != $confirm_password) {
+            return redirect()
+                ->back()
+                ->with('error', 'New password and confirm password does not match!');
+        }
+
+        $user = User::find($request->user_id);
+        $user->Password = Hash::make($new_password);
+        $user->save();
+
+        return redirect()
+            ->route('index')
+            ->with('success', 'Saved !');
+    }
+
+    public function AdvanceSearch()
+    {
+        return view('searchAdvance');
+    }
+
+    private function applynonField($query, $fieldname)
+    {
+        $query->whereNotNull($fieldname);
+    }
+    private function makeDateFormat($date)
+    {
+        return $formattedDate = Carbon::parse($date)->format('Y-m-d');
+    }
+    private function pageSelector($request){
+        $perpage = 10;
+        if ($request->perPage) {
+            $perpage = intval($request->perPage);
+        }
+        return $perpage;
+    }
+
+    public function AdvanceSearchSubmit(Request $request)
+    {
+        $query = Information::query();
+        $perpage = $this->pageSelector($request);
+    
+        $user = Auth::user();
+        if ($request->srchType === $this->ALLSEARCH) {
+            $information = $this->AllAdvanceSearch($request, $perpage);
+        } elseif ($request->srchType === $this->ANYSEARCH) {
+            $information = $this->AnyAdvanceSearch($request, $perpage);
+        }
+        //  $information = 
         return view('admin.dashboard', compact('user', 'information'));
     }
 
     public function collabSearchAdmin(Request $request)
     {
         $searchTerm = $request->input('search');
+        $perpage = $this->pageSelector($request);
+
 
         $user = Auth::user();
         $users = User::where('Nome', 'like', '%' . $searchTerm . '%')
             ->orWhere('mail', 'like', '%' . $searchTerm . '%')
-            ->paginate(10);
+            ->paginate($perpage);
 
         return view('admin.collab', compact('user', 'users'));
     }
@@ -731,5 +1054,14 @@ class AdminController extends Controller
         return response()->json([
             'success' => $success,
         ]);
+    }
+
+    public function getCllabAnagrafhia(Request $request )
+    {
+        $perpage = $this->pageSelector($request);
+        $user = Auth::user();
+        $information = Information::where('Agente_ID', intval($request->collabId))->paginate($perpage);
+
+        return view('admin.dashboard', compact('user', 'information'));
     }
 }

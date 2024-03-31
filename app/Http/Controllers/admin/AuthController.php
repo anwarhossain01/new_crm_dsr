@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Information;
 use App\Models\Password_Reset;
 use App\Models\User;
+use App\Traits\CommonResultTrait;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Auth;
@@ -13,8 +14,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
+
 class AuthController extends Controller
 {
+    use CommonResultTrait;
 
     protected function validator(array $data)
     {
@@ -41,66 +46,51 @@ class AuthController extends Controller
         ]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-
+        $perpage = $this->pageSelector($request);
         $user = Auth::user();
 
         if ($user->Gruppo == 'Admin' || $user->Gruppo == 'Power') {
-            $information = Information::paginate(10);
+            $information = Information::query();
 
-            session(['dataCreaz' => '',
+            $information = $this->sortResults($information, $request)->paginate($perpage);
+
+            session([
+                'dataCreaz' => '',
                 'date_creation_sort' => ''
             ]);
 
-            session(['richiedente' => '',
+            session([
+                'richiedente' => '',
                 'richiedente_sort' => ''
             ]);
 
-            session(['Agente' => '',
+            session([
+                'Agente' => '',
                 'Agente_sort' => ''
             ]);
             return view('admin.dashboard', compact('user', 'information'));
         } elseif ($user->Gruppo == 'User') {
-           
-            if(isset($_REQUEST['sort']))
-            {
 
-                if($_REQUEST['sort']=='data_modifica_asc')
-                {
+            if (isset($_REQUEST['sort'])) {
+
+                if ($_REQUEST['sort'] == 'data_modifica_asc') {
                     $information = Information::where('Agente_ID', $user->ID)->orderBy('datamodif', 'asc')->paginate(100);
-
-                }
-                
-                elseif($_REQUEST['sort']=='data_modifica_desc')
-                {
+                } elseif ($_REQUEST['sort'] == 'data_modifica_desc') {
                     $information = Information::where('Agente_ID', $user->ID)->orderBy('datamodif', 'desc')->paginate(100);
-
-                }
-
-                elseif($_REQUEST['sort']=='creazione_asc')
-                {
+                } elseif ($_REQUEST['sort'] == 'creazione_asc') {
                     $information = Information::where('Agente_ID', $user->ID)->orderBy('Data_Creaz', 'asc')->paginate(100);
-
-                }
-                elseif($_REQUEST['sort']=='creazione_desc')
-                {
+                } elseif ($_REQUEST['sort'] == 'creazione_desc') {
                     $information = Information::where('Agente_ID', $user->ID)->orderBy('Data_Creaz', 'desc')->paginate(100);
-
-                }
-                else{
+                } else {
                     $information = Information::where('Agente_ID', $user->ID)->paginate(100);
-
                 }
-            }
-            else
-            {
+            } else {
                 $information = Information::where('Agente_ID', $user->ID)->paginate(100);
-
             }
             return view('agent.dashboard', compact('user', 'information'));
         }
-
     }
     //
     public function login()
@@ -133,8 +123,6 @@ class AuthController extends Controller
 
         // Authentication failed
         return redirect()->route('login')->with('error', 'Username e/o password non corretti');
-
-
     }
     public function registerSubmit(Request $request)
     {
@@ -151,7 +139,6 @@ class AuthController extends Controller
         $this->create($request->all())->save();
 
         return redirect()->route('login')->with('success', 'Utente creato con successo, effettua il login!');
-
     }
 
     public function logout()
@@ -196,33 +183,70 @@ class AuthController extends Controller
 
     public function ForgotPasswordSubmit(Request $request)
     {
-     //   dd($request->all());
+
+        //         $response = Http::get('http://crm-dsr.mondoweb.it/formtomail/api_send_email.php');
+        // dd(json_decode($response->getBody()->getContents()) );
+        //         $response = Http::post('http://crm-dsr.mondoweb.it/formtomail/api_send_email.php', [
+        //             'title' => 'foo',
+        //             'body' => 'bar',
+        //             'userId' => 1
+        //         ]);
+
+        //   dd($request->all());
         $user = User::where('Nome', $request->username)->orWhere('mail', $request->username)->first();
-    
+
         // generate random 6 digit code
         $code = rand(100000, 999999);
 
         $password_reset = Password_Reset::create([
             'token' => $code,
             'created_at' => now(),
-           
+
         ]);
+        // $name = "ANWAR HOSSAIN";
+        // $email = "anwar.hossain.suman@gmail.com";
+        // $title = "Email Using Mondoweb Server";
+        // $content ="Hi Anwar, is everything okay???";
 
-    
+
+
+
         if ($user) {
-   
-            $send = Mail::mailer('smtp')->send([], [], function ($message) use($code,$user) {
-                $message
-                    ->to($user->mail)
-                    ->from('prova@mondoweb.it', 'Server crm-dsr')
-                    ->subject( 'Codice per reimpostare la password' )
-                    ->setBody('Codice da utilizzare per il recupero della password: ' . $code, 'text/html');
-            });
-            
-            return redirect()->route('password.forgot.change', $user->ID)->with('success', 'Controlla la tua email. Contiene il codice per reimpostare la password');
-        }else {
-            return redirect()->back()->with('error', 'Utente non esistente, prova a reinserire le credenziali di accesso');
 
+            // Mail::raw('Codice da utilizzare per il recupero della password: ' . $code, function (Message $message) use($user) {
+            //     $message->to($user->mail)->from('prova@mondoweb.it', 'CRM-DSR')->subject('Codice per reimpostare la password');
+            // });
+            // $send = Mail::mailer('smtp')->send([], [], function ($message) use ($code, $user) {
+            //     $message
+            //         ->to($user->mail)
+            //         ->from('prova@mondoweb.it', 'Server crm-dsr')
+            //         ->subject('Codice per reimpostare la password')
+            //         ->setBody('Codice da utilizzare per il recupero della password: ' . $code, 'text/html');
+            // });
+
+            try {
+                $uri = "http://crm-dsr.mondoweb.it/formtomail/api_send_email.php";
+                $params['headers'] = [];
+                $params['form_params'] = [
+                    'to' => $user->mail,
+                    'type' => 'reset_password',
+                    'code' => $code
+                ];
+                $client = new Client();
+
+                $response = $client->request('POST', $uri, $params);
+                $data = json_decode($response->getBody()->getContents(), true);
+                if ($data['status'] == 1) {
+                    return redirect()->route('password.forgot.change', $user->ID)->with('success', 'Controlla la tua email. Contiene il codice per reimpostare la password');
+                } else {
+                    return redirect()->back()->with('error', 'Contatta il tuo team di supporto IT');
+                }
+            } catch (\Throwable $th) {
+
+                return redirect()->back()->with('error', 'Contatta il tuo team di supporto IT');
+            }
+        } else {
+            return redirect()->back()->with('error', 'Utente non esistente, prova a reinserire le credenziali di accesso');
         }
     }
 
@@ -230,7 +254,6 @@ class AuthController extends Controller
     {
 
         $count = User::where('mail', $req->email)->count();
-        return response()->json(['status'=>$count==0?true:false]);
-
+        return response()->json(['status' => $count == 0 ? true : false]);
     }
 }

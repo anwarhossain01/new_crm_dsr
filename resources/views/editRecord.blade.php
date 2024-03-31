@@ -10,6 +10,7 @@
 
         <form action="{{ route('info.edit.submit') }}" method="post">
             <input type="hidden" name="id" value="{{ $information->ID }}">
+            <input type="hidden" name="pre_url" value="{{ url()->previous() }}">
             @csrf
             <div class="flex flex-wrap justify-center">
                 <div class="ml-0 lg:mr-8">
@@ -358,7 +359,7 @@
 
     <div
         class="flex flex-shrink-0 flex-wrap items-center justify-end rounded-b-md border-t-2 border-neutral-100 border-opacity-100 p-4 dark:border-opacity-50">
-        <a type="button" href="{{ route('index') }}"
+        <a type="button" href="{{ url()->previous() }}"
             class="bg-primary-100 text-primary-700 hover:bg-primary-accent-100 focus:bg-primary-accent-100 active:bg-primary-accent-200 inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal transition duration-150 ease-in-out focus:outline-none focus:ring-0"
             data-te-modal-dismiss data-te-ripple-init data-te-ripple-color="light">
             Chiudi

@@ -41,10 +41,10 @@
 								     <div class="condizioni">
                         <center>
                             <span class="font-semibold">Condizioni:&nbsp;</span>
-                            <input type="radio" name="srchType" id="all_checkbox" value="and" checked>
+                            <input type="radio" name="srchType" id="all_checkbox" value="all" checked>
                             <label for="all_checkbox">Tutte</label>
                             &nbsp;&nbsp;&nbsp;
-                            <input type="radio" name="srchType" id="any_checkbox" value="or">
+                            <input type="radio" name="srchType" id="any_checkbox" value="any">
                             <label for="any_checkbox">Qualunque</label>
                         </center>
                     </div>

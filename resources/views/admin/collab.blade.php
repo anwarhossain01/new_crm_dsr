@@ -153,15 +153,15 @@
                 aria-labelledby="dropdownMenuButton9" data-te-dropdown-menu-ref>
                 <li>
                     <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-neutral-600"
-                        href="{{ route('collab.pg', 10) }}" data-te-dropdown-item-ref>10</a>
+                        href="{{ route(request()->route()->getName(), array_merge(request()->all(), ['perPage' => 10])) }}" data-te-dropdown-item-ref>10</a>
                 </li>
                 <li>
                     <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-neutral-600"
-                        href="{{ route('collab.pg', 20) }}" data-te-dropdown-item-ref>20</a>
+                        href="{{ route(request()->route()->getName(), array_merge(request()->all(), ['perPage' => 20])) }}" data-te-dropdown-item-ref>20</a>
                 </li>
                 <li>
                     <a class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-neutral-600"
-                        href="{{ route('collab.pg', 50) }}" data-te-dropdown-item-ref>50</a>
+                        href="{{ route(request()->route()->getName(), array_merge(request()->all(), ['perPage' => 50])) }}" data-te-dropdown-item-ref>50</a>
                 </li>
             </ul>
         </div>
@@ -239,8 +239,16 @@
                                         </div>
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ $u->Nome }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4">Anagrafiche
-                                        {{ $u->Information->count() == 0 ? '' : '(' . $u->Information->count() . ')' }}
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <button onclick="window.location.href='{{ route('collab.show', ['collabId' => $u->ID]) }}'" type="button" class=" h-1/2 rounded bg-blue-500 p-2"
+                                        type="button" >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="h-3 w-3 text-white">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                        </svg>
+                                        
+                                    </button>
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4">{{ $u->mail }}</td>
                                 </tr>
@@ -257,6 +265,7 @@
     {{ $users->links() }}
 
     <script>
+
         function showData(id, nome, mail, notes) {
 
 
